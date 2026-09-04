@@ -1,0 +1,6 @@
+@Tarefa_ListaCompras_HostAddress = http://localhost:5041
+
+GET {{Tarefa_ListaCompras_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
