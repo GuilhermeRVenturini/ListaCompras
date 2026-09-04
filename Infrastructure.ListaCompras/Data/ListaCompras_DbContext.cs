@@ -15,12 +15,16 @@ namespace Infrastructure.ListaCompras.Data
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<Status> Status { get; set; }
         public DbSet<PrecoMercado> PrecoMercado { get; set; }
+        public DbSet<UsuarioLista>  UsuarioLista { get; set; }
+        public DbSet<ProdutoLista> ProdutoLista { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<PrecoMercado>().HasNoKey();
+            modelBuilder.Entity<UsuarioLista>().HasNoKey();
+            modelBuilder.Entity<ProdutoLista>().HasNoKey();
         }
 
     }

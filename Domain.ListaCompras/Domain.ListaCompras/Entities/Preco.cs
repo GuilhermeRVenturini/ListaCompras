@@ -1,11 +1,14 @@
-﻿namespace Domain.ListaCompras.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Domain.ListaCompras.Entities
 {
-    public class Preco
+    public sealed class Preco
     {
         //Properties
+        [Key]
         public int Id { get; set; }
+        [Required]
         public decimal Valor { get; set; }
         public bool Desconto { get; set; }
-        public decimal ValorAtual { get; set; }
     }
 }
