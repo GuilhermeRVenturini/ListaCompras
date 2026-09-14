@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.ListaCompras.Common.Results
+﻿namespace Domain.ListaCompras.Common.Results
 {
     public abstract class Result
     {
