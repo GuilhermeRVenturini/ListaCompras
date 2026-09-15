@@ -89,18 +89,17 @@ namespace Infrastructure.ListaCompras.Repositories
         {
             try
             {
-                var entity = await _dbSet.FindAsync(id);
+                var result = await GetByIdAsync(id);
+                
+                if (!result.IsSuccess || result.Data is null)
+                    return result;
 
-                if (entity is null)
-                    return ResultData<T>
-                        .Error("Registro não encontrado.");
-
-                _dbSet.Remove(entity);
+                _dbSet.Remove(result.Data);
 
                 await _context.SaveChangesAsync();
 
                 return ResultData<T>
-                    .Success(entity);
+                    .Success(result.Data);
             }
             catch (DbUpdateException)
             {
