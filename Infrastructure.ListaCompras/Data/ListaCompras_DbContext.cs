@@ -22,9 +22,14 @@ namespace Infrastructure.ListaCompras.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<PrecoMercado>().HasNoKey();
-            modelBuilder.Entity<UsuarioLista>().HasNoKey();
-            modelBuilder.Entity<ProdutoLista>().HasNoKey();
+            modelBuilder.Entity<PrecoMercado>()
+                .HasKey(x => new { x.ProdutoId, x.MercadoId });
+
+            modelBuilder.Entity<UsuarioLista>()
+                .HasKey(x => new { x.ListaId, x.UsuarioId });
+
+            modelBuilder.Entity<ProdutoLista>()
+                .HasKey(x => new { x.ProdutoId, x.ListaId });
         }
 
     }

@@ -90,7 +90,7 @@ namespace Infrastructure.ListaCompras.Repositories
             try
             {
                 var result = await GetByIdAsync(id);
-                
+
                 if (!result.IsSuccess || result.Data is null)
                     return result;
 

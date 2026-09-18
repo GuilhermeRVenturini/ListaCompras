@@ -1,18 +1,18 @@
-﻿using Domain.ListaCompras.Common.Results;
-using Domain.ListaCompras.Entities;
+﻿using Application.ListaCompras.DTOs.Mercado;
+using Domain.ListaCompras.Common.Results;
 
 namespace Application.ListaCompras.Interfaces
 {
     public interface IMercadoService
     {
-        Task<ResultData<IEnumerable<Mercado>>> GetAllAsync();
+        Task<ResultData<IEnumerable<MercadoResponseDto>>> GetAllAsync();
 
-        Task<ResultData<Mercado>> GetByIdAsync(int id);
+        Task<ResultData<MercadoResponseDto>> GetByIdAsync(int id);
 
-        Task<ResultData<Mercado>> CreateAsync(Mercado mercado);
+        Task<ResultData<MercadoResponseDto>> CreateAsync(MercadoRequestDto request);
 
-        Task<ResultData<Mercado>> UpdateAsync(Mercado mercado);
+        Task<ResultData<MercadoResponseDto>> UpdateAsync(int id, MercadoRequestDto request);
 
-        Task<ResultData<Mercado>> DeleteAsync(int id);
+        Task<ResultData<MercadoResponseDto>> DeleteAsync(int id);
     }
 }
