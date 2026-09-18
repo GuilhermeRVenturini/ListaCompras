@@ -2,9 +2,9 @@
 {
     public sealed class UsuarioResponseDto
     {
-        public Guid Id { get; set; }
-        public string Cpf { get; set; } = default!;
-        public string Nome { get; set; } = default!;
-        public string Email { get; set; } = default!;
+        public Guid Id { get; init; }
+        public string Cpf { get; init; } = default!;
+        public string Nome { get; init; } = default!;
+        public string Email { get; init; } = default!;
     }
 }

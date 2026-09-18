@@ -2,7 +2,7 @@
 {
     public sealed class UsuarioListaResponseDto
     {
-        public int ListaId { get; set; }
-        public Guid UsuarioId { get; set; }
+        public int ListaId { get; init; }
+        public Guid UsuarioId { get; init; }
     }
 }

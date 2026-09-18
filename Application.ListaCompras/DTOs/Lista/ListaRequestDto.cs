@@ -4,10 +4,10 @@ namespace Application.ListaCompras.DTOs.Lista
 {
     public sealed class ListaRequestDto
     {
-        public DateTime DataListaCriacao { get; set; }
+        public DateTime DataListaCriacao { get; init; }
 
         [Required]
         [MaxLength(64)]
-        public string Nome { get; set; } = default!;
+        public string Nome { get; init; } = default!;
     }
 }

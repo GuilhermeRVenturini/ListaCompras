@@ -6,6 +6,6 @@ namespace Application.ListaCompras.DTOs.Status
     {
         [Required]
         [MaxLength(128)]
-        public string Nome { get; set; } = default!;
+        public string Nome { get; init; } = default!;
     }
 }

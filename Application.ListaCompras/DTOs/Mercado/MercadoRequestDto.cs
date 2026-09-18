@@ -6,14 +6,14 @@ namespace Application.ListaCompras.DTOs.Mercado
     {
         [Required]
         [MaxLength(64)]
-        public string Nome { get; set; } = default!;
+        public string Nome { get; init; } = default!;
 
         [Required]
         [MaxLength(256)]
-        public string HorarioFuncionamento { get; set; } = default!;
+        public string HorarioFuncionamento { get; init; } = default!;
 
         [Required]
         [MaxLength(256)]
-        public string Endereco { get; set; } = default!;
+        public string Endereco { get; init; } = default!;
     }
 }

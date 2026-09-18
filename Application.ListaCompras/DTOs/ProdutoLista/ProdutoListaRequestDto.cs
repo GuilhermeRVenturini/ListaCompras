@@ -2,9 +2,9 @@
 {
     public sealed class ProdutoListaRequestDto
     {
-        public int ProdutoId { get; set; }
-        public int ListaId { get; set; }
-        public int StatusId { get; set; }
-        public int QuantidadeEstoque { get; set; }
+        public int ProdutoId { get; init; }
+        public int ListaId { get; init; }
+        public int StatusId { get; init; }
+        public int QuantidadeEstoque { get; init; }
     }
 }

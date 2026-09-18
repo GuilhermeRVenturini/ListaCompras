@@ -2,8 +2,8 @@
 {
     public sealed class PrecoResponseDto
     {
-        public int Id { get; set; }
-        public decimal Valor { get; set; }
-        public bool Desconto { get; set; }
+        public int Id { get; init; }
+        public decimal Valor { get; init; }
+        public bool Desconto { get; init; }
     }
 }

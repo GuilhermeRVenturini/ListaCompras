@@ -2,11 +2,11 @@
 {
     public sealed class HistoricoResponseDto
     {
-        public int Id { get; set; }
-        public string Registro { get; set; } = default!;
-        public int ProdutoId { get; set; }
-        public int MercadoId { get; set; }
-        public int PrecoId { get; set; }
-        public DateTime DataRegistro { get; set; }
+        public int Id { get; init; }
+        public string Registro { get; init; } = default!;
+        public int ProdutoId { get; init; }
+        public int MercadoId { get; init; }
+        public int PrecoId { get; init; }
+        public DateTime DataRegistro { get; init; }
     }
 }

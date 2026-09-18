@@ -6,14 +6,14 @@ namespace Application.ListaCompras.DTOs.Usuario
     {
         [Required]
         [MaxLength(11)]
-        public string Cpf { get; set; } = default!;
+        public string Cpf { get; init; } = default!;
 
         [Required]
         [MaxLength(64)]
-        public string Nome { get; set; } = default!;
+        public string Nome { get; init; } = default!;
 
         [Required]
         [MaxLength(64)]
-        public string Email { get; set; } = default!;
+        public string Email { get; init; } = default!;
     }
 }

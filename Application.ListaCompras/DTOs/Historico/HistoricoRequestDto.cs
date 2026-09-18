@@ -5,11 +5,11 @@ namespace Application.ListaCompras.DTOs.Historico
     public sealed class HistoricoRequestDto
     {
         [MaxLength(1024)]
-        public string Registro { get; set; } = default!;
+        public string Registro { get; init; } = default!;
 
-        public int ProdutoId { get; set; }
-        public int MercadoId { get; set; }
-        public int PrecoId { get; set; }
-        public DateTime DataRegistro { get; set; }
+        public int ProdutoId { get; init; }
+        public int MercadoId { get; init; }
+        public int PrecoId { get; init; }
+        public DateTime DataRegistro { get; init; }
     }
 }

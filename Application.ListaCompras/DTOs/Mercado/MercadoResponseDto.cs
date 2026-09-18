@@ -2,9 +2,9 @@
 {
     public sealed class MercadoResponseDto
     {
-        public int Id { get; set; }
-        public string Nome { get; set; } = default!;
-        public string HorarioFuncionamento { get; set; } = default!;
-        public string Endereco { get; set; } = default!;
+        public int Id { get; init; }
+        public string Nome { get; init; } = default!;
+        public string HorarioFuncionamento { get; init; } = default!;
+        public string Endereco { get; init; } = default!;
     }
 }

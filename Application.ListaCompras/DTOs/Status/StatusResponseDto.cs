@@ -2,7 +2,7 @@
 {
     public sealed class StatusResponseDto
     {
-        public int Id { get; set; }
-        public string Nome { get; set; } = default!;
+        public int Id { get; init; }
+        public string Nome { get; init; } = default!;
     }
 }

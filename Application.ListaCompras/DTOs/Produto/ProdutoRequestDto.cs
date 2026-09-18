@@ -6,16 +6,16 @@ namespace Application.ListaCompras.DTOs.Produto
     {
         [Required]
         [MaxLength(128)]
-        public string Nome { get; set; } = default!;
+        public string Nome { get; init; } = default!;
 
         [Required]
         [MaxLength(1024)]
-        public string Descricao { get; set; } = default!;
+        public string Descricao { get; init; } = default!;
 
         [Required]
         [MaxLength(128)]
-        public string Fabricante { get; set; } = default!;
+        public string Fabricante { get; init; } = default!;
 
-        public DateOnly Validade { get; set; }
+        public DateOnly Validade { get; init; }
     }
 }

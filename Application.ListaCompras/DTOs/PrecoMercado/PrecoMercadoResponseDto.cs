@@ -2,8 +2,8 @@
 {
     public sealed class PrecoMercadoResponseDto
     {
-        public int ProdutoId { get; set; }
-        public int MercadoId { get; set; }
-        public int PrecoId { get; set; }
+        public int ProdutoId { get; init; }
+        public int MercadoId { get; init; }
+        public int PrecoId { get; init; }
     }
 }

@@ -2,7 +2,7 @@
 {
     public sealed class PrecoRequestDto
     {
-        public decimal Valor { get; set; }
-        public bool Desconto { get; set; }
+        public decimal Valor { get; init; }
+        public bool Desconto { get; init; }
     }
 }
