@@ -5,7 +5,7 @@
         public int ListaId { get; set; }
         public virtual Lista? Lista { get; set; }
 
-        public int UsuarioId { get; set; }
+        public Guid UsuarioId { get; set; }
         public virtual Usuario? Usuario { get; set; }
     }
 }

@@ -12,10 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.ListaCompras
 		{4FE026C3-B123-495D-A433-9E061C642E73} = {4FE026C3-B123-495D-A433-9E061C642E73}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.ListaCompras", "Application.ListaCompras\Application.ListaCompras.csproj", "{F14ACFB4-A4C5-4382-B7DA-B26069DF5388}"
-	ProjectSection(ProjectDependencies) = postProject
-		{4FE026C3-B123-495D-A433-9E061C642E73} = {4FE026C3-B123-495D-A433-9E061C642E73}
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.ListaCompras", "Application.ListaCompras\Application.ListaCompras.csproj", "{1610DCC4-EF04-4700-AAFE-3D67823C6BFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +32,10 @@ Global
 		{54E36FE7-B093-409B-A22A-839CE8AE83B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54E36FE7-B093-409B-A22A-839CE8AE83B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54E36FE7-B093-409B-A22A-839CE8AE83B7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F14ACFB4-A4C5-4382-B7DA-B26069DF5388}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F14ACFB4-A4C5-4382-B7DA-B26069DF5388}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F14ACFB4-A4C5-4382-B7DA-B26069DF5388}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F14ACFB4-A4C5-4382-B7DA-B26069DF5388}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1610DCC4-EF04-4700-AAFE-3D67823C6BFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1610DCC4-EF04-4700-AAFE-3D67823C6BFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1610DCC4-EF04-4700-AAFE-3D67823C6BFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1610DCC4-EF04-4700-AAFE-3D67823C6BFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
