@@ -50,10 +50,7 @@ public sealed class UsuarioController : ControllerBase
         if (!result.IsSuccess || result.Data is null)
             return BadRequest(new { result.Message });
 
-        return CreatedAtAction(
-            nameof(GetByIdAsync),
-            new { id = result.Data.Id },
-            result.Data);
+        return Ok(result.Data);
     }
 
     [HttpPut("{id:guid}")]

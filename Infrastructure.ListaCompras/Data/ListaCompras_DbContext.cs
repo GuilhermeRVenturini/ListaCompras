@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Domain.ListaCompras.Entities;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Infrastructure.ListaCompras.Data
 {
@@ -17,6 +18,11 @@ namespace Infrastructure.ListaCompras.Data
         public DbSet<PrecoMercado> PrecoMercado { get; set; }
         public DbSet<UsuarioLista>  UsuarioLista { get; set; }
         public DbSet<ProdutoLista> ProdutoLista { get; set; }
+
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

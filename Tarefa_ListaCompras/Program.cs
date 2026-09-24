@@ -17,7 +17,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
         "A connection string 'DefaultConnection' não foi configurada.");
 
 builder.Services.AddDbContext<ListaCompras_DbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseNpgsql(connectionString));
 
 // Injeção de dependência - Repositórios
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
