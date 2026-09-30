@@ -6,6 +6,8 @@ namespace Domain.ListaCompras.Interfaces
     public interface IProdutoListaRepository
     {
         Task<ResultData<IEnumerable<ProdutoLista>>> GetAllAsync();
+        Task<ResultData<IEnumerable<ProdutoLista>>> GetByListaIdAsync(int listaId);
+        Task<ResultData<IEnumerable<ProdutoLista>>> GetByProdutoIdAsync(int produtoId);
         Task<ResultData<ProdutoLista>> GetByIdAsync(int produtoId, int listaId);
         Task<ResultData<ProdutoLista>> CreateAsync(ProdutoLista entity);
         Task<ResultData<ProdutoLista>> UpdateAsync(ProdutoLista entity);

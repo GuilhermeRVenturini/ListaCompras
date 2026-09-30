@@ -1,16 +1,16 @@
-﻿using Application.ListaCompras.DTOs.PrecoMercado;
+using Application.ListaCompras.DTOs.PrecoMercado;
 using Domain.ListaCompras.Entities;
 
 namespace Application.ListaCompras.Mappings
 {
     internal static class PrecoMercadoMapping
     {
-        public static PrecoMercado ToEntity(PrecoMercadoRequestDto request)
+        public static PrecoMercado ToEntity(int produtoId, int mercadoId, PrecoMercadoRequestDto request)
         {
             return new PrecoMercado
             {
-                ProdutoId = request.ProdutoId,
-                MercadoId = request.MercadoId,
+                ProdutoId = produtoId,
+                MercadoId = mercadoId,
                 PrecoId = request.PrecoId
             };
         }
@@ -25,8 +25,12 @@ namespace Application.ListaCompras.Mappings
             return new PrecoMercadoResponseDto
             {
                 ProdutoId = entity.ProdutoId,
+                ProdutoNome = entity.Produto?.Nome ?? string.Empty,
                 MercadoId = entity.MercadoId,
-                PrecoId = entity.PrecoId
+                MercadoNome = entity.Mercado?.Nome ?? string.Empty,
+                PrecoId = entity.PrecoId,
+                Valor = entity.Preco?.Valor ?? 0,
+                Desconto = entity.Preco?.Desconto ?? false
             };
         }
     }

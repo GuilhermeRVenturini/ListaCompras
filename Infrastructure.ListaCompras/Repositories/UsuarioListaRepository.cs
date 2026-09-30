@@ -16,7 +16,7 @@ namespace Infrastructure.ListaCompras.Repositories
         {
             try
             {
-                var entities = await _dbSet
+                var entities = await QueryWithRelationships()
                     .AsNoTracking()
                     .ToListAsync();
 
@@ -28,11 +28,46 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
+        public async Task<ResultData<IEnumerable<UsuarioLista>>> GetByListaIdAsync(int listaId)
+        {
+            try
+            {
+                var entities = await QueryWithRelationships()
+                    .AsNoTracking()
+                    .Where(x => x.ListaId == listaId)
+                    .ToListAsync();
+
+                return ResultData<IEnumerable<UsuarioLista>>.Success(entities);
+            }
+            catch (Exception)
+            {
+                return ResultData<IEnumerable<UsuarioLista>>.Error("Erro ao buscar os usuários da lista.");
+            }
+        }
+
+        public async Task<ResultData<IEnumerable<UsuarioLista>>> GetByUsuarioIdAsync(Guid usuarioId)
+        {
+            try
+            {
+                var entities = await QueryWithRelationships()
+                    .AsNoTracking()
+                    .Where(x => x.UsuarioId == usuarioId)
+                    .ToListAsync();
+
+                return ResultData<IEnumerable<UsuarioLista>>.Success(entities);
+            }
+            catch (Exception)
+            {
+                return ResultData<IEnumerable<UsuarioLista>>.Error("Erro ao buscar as listas do usuário.");
+            }
+        }
+
         public async Task<ResultData<UsuarioLista>> GetByIdAsync(int listaId, Guid usuarioId)
         {
             try
             {
-                var entity = await _dbSet.FindAsync(listaId, usuarioId);
+                var entity = await QueryWithRelationships()
+                    .FirstOrDefaultAsync(x => x.ListaId == listaId && x.UsuarioId == usuarioId);
 
                 if (entity is null)
                     return ResultData<UsuarioLista>.Error("Registro não encontrado.");
@@ -56,7 +91,7 @@ namespace Infrastructure.ListaCompras.Repositories
             }
             catch (DbUpdateException)
             {
-                return ResultData<UsuarioLista>.Error("Erro ao adicionar o registro.");
+                return ResultData<UsuarioLista>.Error("Erro ao adicionar o usuário à lista.");
             }
         }
 
@@ -76,8 +111,15 @@ namespace Infrastructure.ListaCompras.Repositories
             }
             catch (DbUpdateException)
             {
-                return ResultData<UsuarioLista>.Error("Erro ao excluir o registro.");
+                return ResultData<UsuarioLista>.Error("Erro ao remover o usuário da lista.");
             }
+        }
+
+        private IQueryable<UsuarioLista> QueryWithRelationships()
+        {
+            return _dbSet
+                .Include(x => x.Lista)
+                .Include(x => x.Usuario);
         }
     }
 }

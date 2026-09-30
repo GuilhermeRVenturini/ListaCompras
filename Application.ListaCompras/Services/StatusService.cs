@@ -37,35 +37,6 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
-        public async Task<ResultData<StatusResponseDto>> CreateAsync(StatusRequestDto request)
-        {
-            var entity = StatusMapping.ToEntity(request);
-            var result = await _repository.CreateAsync(entity);
-
-            return MapResult(result);
-        }
-
-        public async Task<ResultData<StatusResponseDto>> UpdateAsync(int id, StatusRequestDto request)
-        {
-            var existingResult = await _repository.GetByIdAsync(id);
-
-            if (!existingResult.IsSuccess || existingResult.Data is null)
-                return ResultData<StatusResponseDto>.Error(existingResult.Message);
-
-            StatusMapping.MapToEntity(request, existingResult.Data);
-
-            var updateResult = await _repository.UpdateAsync(existingResult.Data);
-
-            return MapResult(updateResult);
-        }
-
-        public async Task<ResultData<StatusResponseDto>> DeleteAsync(int id)
-        {
-            var result = await _repository.DeleteAsync(id);
-
-            return MapResult(result);
-        }
-
         private static ResultData<StatusResponseDto> MapResult(ResultData<Status> result)
         {
             if (!result.IsSuccess || result.Data is null)

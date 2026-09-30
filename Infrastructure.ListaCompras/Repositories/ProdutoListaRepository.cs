@@ -16,7 +16,7 @@ namespace Infrastructure.ListaCompras.Repositories
         {
             try
             {
-                var entities = await _dbSet
+                var entities = await QueryWithRelationships()
                     .AsNoTracking()
                     .ToListAsync();
 
@@ -28,11 +28,46 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
+        public async Task<ResultData<IEnumerable<ProdutoLista>>> GetByListaIdAsync(int listaId)
+        {
+            try
+            {
+                var entities = await QueryWithRelationships()
+                    .AsNoTracking()
+                    .Where(x => x.ListaId == listaId)
+                    .ToListAsync();
+
+                return ResultData<IEnumerable<ProdutoLista>>.Success(entities);
+            }
+            catch (Exception)
+            {
+                return ResultData<IEnumerable<ProdutoLista>>.Error("Erro ao buscar os produtos da lista.");
+            }
+        }
+
+        public async Task<ResultData<IEnumerable<ProdutoLista>>> GetByProdutoIdAsync(int produtoId)
+        {
+            try
+            {
+                var entities = await QueryWithRelationships()
+                    .AsNoTracking()
+                    .Where(x => x.ProdutoId == produtoId)
+                    .ToListAsync();
+
+                return ResultData<IEnumerable<ProdutoLista>>.Success(entities);
+            }
+            catch (Exception)
+            {
+                return ResultData<IEnumerable<ProdutoLista>>.Error("Erro ao buscar as listas do produto.");
+            }
+        }
+
         public async Task<ResultData<ProdutoLista>> GetByIdAsync(int produtoId, int listaId)
         {
             try
             {
-                var entity = await _dbSet.FindAsync(produtoId, listaId);
+                var entity = await QueryWithRelationships()
+                    .FirstOrDefaultAsync(x => x.ProdutoId == produtoId && x.ListaId == listaId);
 
                 if (entity is null)
                     return ResultData<ProdutoLista>.Error("Registro não encontrado.");
@@ -56,7 +91,7 @@ namespace Infrastructure.ListaCompras.Repositories
             }
             catch (DbUpdateException)
             {
-                return ResultData<ProdutoLista>.Error("Erro ao adicionar o registro.");
+                return ResultData<ProdutoLista>.Error("Erro ao adicionar o produto à lista.");
             }
         }
 
@@ -71,7 +106,7 @@ namespace Infrastructure.ListaCompras.Repositories
             }
             catch (DbUpdateException)
             {
-                return ResultData<ProdutoLista>.Error("Erro ao atualizar o registro.");
+                return ResultData<ProdutoLista>.Error("Erro ao atualizar o produto da lista.");
             }
         }
 
@@ -91,8 +126,16 @@ namespace Infrastructure.ListaCompras.Repositories
             }
             catch (DbUpdateException)
             {
-                return ResultData<ProdutoLista>.Error("Erro ao excluir o registro.");
+                return ResultData<ProdutoLista>.Error("Erro ao remover o produto da lista.");
             }
+        }
+
+        private IQueryable<ProdutoLista> QueryWithRelationships()
+        {
+            return _dbSet
+                .Include(x => x.Produto)
+                .Include(x => x.Lista)
+                .Include(x => x.Status);
         }
     }
 }

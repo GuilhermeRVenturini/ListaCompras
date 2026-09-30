@@ -8,11 +8,5 @@ namespace Application.ListaCompras.Interfaces
         Task<ResultData<IEnumerable<StatusResponseDto>>> GetAllAsync();
 
         Task<ResultData<StatusResponseDto>> GetByIdAsync(int id);
-
-        Task<ResultData<StatusResponseDto>> CreateAsync(StatusRequestDto request);
-
-        Task<ResultData<StatusResponseDto>> UpdateAsync(int id, StatusRequestDto request);
-
-        Task<ResultData<StatusResponseDto>> DeleteAsync(int id);
     }
 }
