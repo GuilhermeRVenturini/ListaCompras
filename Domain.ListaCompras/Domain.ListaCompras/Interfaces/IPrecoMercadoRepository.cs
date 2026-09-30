@@ -6,6 +6,8 @@ namespace Domain.ListaCompras.Interfaces
     public interface IPrecoMercadoRepository
     {
         Task<ResultData<IEnumerable<PrecoMercado>>> GetAllAsync();
+        Task<ResultData<IEnumerable<PrecoMercado>>> GetByProdutoIdAsync(int produtoId);
+        Task<ResultData<IEnumerable<PrecoMercado>>> GetByMercadoIdAsync(int mercadoId);
         Task<ResultData<PrecoMercado>> GetByIdAsync(int produtoId, int mercadoId);
         Task<ResultData<PrecoMercado>> CreateAsync(PrecoMercado entity);
         Task<ResultData<PrecoMercado>> UpdateAsync(PrecoMercado entity);

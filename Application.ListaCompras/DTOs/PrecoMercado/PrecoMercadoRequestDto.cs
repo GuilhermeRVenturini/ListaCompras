@@ -1,9 +1,10 @@
-﻿namespace Application.ListaCompras.DTOs.PrecoMercado
+using System.ComponentModel.DataAnnotations;
+
+namespace Application.ListaCompras.DTOs.PrecoMercado
 {
     public sealed class PrecoMercadoRequestDto
     {
-        public int ProdutoId { get; init; }
-        public int MercadoId { get; init; }
+        [Range(1, int.MaxValue)]
         public int PrecoId { get; init; }
     }
 }

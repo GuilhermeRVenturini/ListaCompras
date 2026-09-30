@@ -1,16 +1,16 @@
-﻿using Application.ListaCompras.DTOs.UsuarioLista;
+using Application.ListaCompras.DTOs.UsuarioLista;
 using Domain.ListaCompras.Entities;
 
 namespace Application.ListaCompras.Mappings
 {
     internal static class UsuarioListaMapping
     {
-        public static UsuarioLista ToEntity(UsuarioListaRequestDto request)
+        public static UsuarioLista ToEntity(int listaId, Guid usuarioId)
         {
             return new UsuarioLista
             {
-                ListaId = request.ListaId,
-                UsuarioId = request.UsuarioId
+                ListaId = listaId,
+                UsuarioId = usuarioId
             };
         }
 
@@ -19,7 +19,10 @@ namespace Application.ListaCompras.Mappings
             return new UsuarioListaResponseDto
             {
                 ListaId = entity.ListaId,
-                UsuarioId = entity.UsuarioId
+                ListaNome = entity.Lista?.Nome ?? string.Empty,
+                UsuarioId = entity.UsuarioId,
+                UsuarioNome = entity.Usuario?.Nome ?? string.Empty,
+                UsuarioEmail = entity.Usuario?.Email ?? string.Empty
             };
         }
     }

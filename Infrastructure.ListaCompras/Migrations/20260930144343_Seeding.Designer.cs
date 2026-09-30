@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.ListaCompras.Migrations
 {
     [DbContext(typeof(ListaCompras_DbContext))]
-    [Migration("20260924180450_Initial_Migration")]
-    partial class Initial_Migration
+    [Migration("20260930144343_Seeding")]
+    partial class Seeding
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,13 +36,26 @@ namespace Infrastructure.ListaCompras.Migrations
                     b.Property<DateTime>("DataRegistro")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("MercadoId")
+                    b.Property<string>("Entidade")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<int?>("ListaId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("PrecoId")
+                    b.Property<int?>("MercadoId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ProdutoId")
+                    b.Property<string>("Operacao")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<int?>("PrecoId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProdutoId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Registro")
@@ -50,13 +63,25 @@ namespace Infrastructure.ListaCompras.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
 
+                    b.Property<int?>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("UsuarioId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ListaId");
 
                     b.HasIndex("MercadoId");
 
                     b.HasIndex("PrecoId");
 
                     b.HasIndex("ProdutoId");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Historico");
                 });
@@ -219,6 +244,23 @@ namespace Infrastructure.ListaCompras.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Status");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Nome = "Pendente"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Nome = "Comprado"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Nome = "Indisponível"
+                        });
                 });
 
             modelBuilder.Entity("Domain.ListaCompras.Entities.Usuario", b =>
@@ -264,47 +306,65 @@ namespace Infrastructure.ListaCompras.Migrations
 
             modelBuilder.Entity("Domain.ListaCompras.Entities.Historico", b =>
                 {
-                    b.HasOne("Domain.ListaCompras.Entities.Mercado", "Mercado")
+                    b.HasOne("Domain.ListaCompras.Entities.Lista", "Lista")
                         .WithMany()
+                        .HasForeignKey("ListaId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Domain.ListaCompras.Entities.Mercado", "Mercado")
+                        .WithMany("Historicos")
                         .HasForeignKey("MercadoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Domain.ListaCompras.Entities.Preco", "Preco")
-                        .WithMany()
+                        .WithMany("Historicos")
                         .HasForeignKey("PrecoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Domain.ListaCompras.Entities.Produto", "Produto")
-                        .WithMany()
+                        .WithMany("Historicos")
                         .HasForeignKey("ProdutoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Domain.ListaCompras.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Domain.ListaCompras.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Lista");
 
                     b.Navigation("Mercado");
 
                     b.Navigation("Preco");
 
                     b.Navigation("Produto");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Domain.ListaCompras.Entities.PrecoMercado", b =>
                 {
                     b.HasOne("Domain.ListaCompras.Entities.Mercado", "Mercado")
-                        .WithMany()
+                        .WithMany("PrecoMercados")
                         .HasForeignKey("MercadoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.ListaCompras.Entities.Preco", "Preco")
-                        .WithMany()
+                        .WithMany("PrecoMercados")
                         .HasForeignKey("PrecoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.ListaCompras.Entities.Produto", "Produto")
-                        .WithMany()
+                        .WithMany("PrecoMercados")
                         .HasForeignKey("ProdutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -319,19 +379,19 @@ namespace Infrastructure.ListaCompras.Migrations
             modelBuilder.Entity("Domain.ListaCompras.Entities.ProdutoLista", b =>
                 {
                     b.HasOne("Domain.ListaCompras.Entities.Lista", "Lista")
-                        .WithMany()
+                        .WithMany("ProdutoListas")
                         .HasForeignKey("ListaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.ListaCompras.Entities.Produto", "Produto")
-                        .WithMany()
+                        .WithMany("ProdutoListas")
                         .HasForeignKey("ProdutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.ListaCompras.Entities.Status", "Status")
-                        .WithMany()
+                        .WithMany("ProdutoListas")
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -346,13 +406,13 @@ namespace Infrastructure.ListaCompras.Migrations
             modelBuilder.Entity("Domain.ListaCompras.Entities.UsuarioLista", b =>
                 {
                     b.HasOne("Domain.ListaCompras.Entities.Lista", "Lista")
-                        .WithMany()
+                        .WithMany("UsuarioListas")
                         .HasForeignKey("ListaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.ListaCompras.Entities.Usuario", "Usuario")
-                        .WithMany()
+                        .WithMany("UsuarioListas")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -360,6 +420,46 @@ namespace Infrastructure.ListaCompras.Migrations
                     b.Navigation("Lista");
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("Domain.ListaCompras.Entities.Lista", b =>
+                {
+                    b.Navigation("ProdutoListas");
+
+                    b.Navigation("UsuarioListas");
+                });
+
+            modelBuilder.Entity("Domain.ListaCompras.Entities.Mercado", b =>
+                {
+                    b.Navigation("Historicos");
+
+                    b.Navigation("PrecoMercados");
+                });
+
+            modelBuilder.Entity("Domain.ListaCompras.Entities.Preco", b =>
+                {
+                    b.Navigation("Historicos");
+
+                    b.Navigation("PrecoMercados");
+                });
+
+            modelBuilder.Entity("Domain.ListaCompras.Entities.Produto", b =>
+                {
+                    b.Navigation("Historicos");
+
+                    b.Navigation("PrecoMercados");
+
+                    b.Navigation("ProdutoListas");
+                });
+
+            modelBuilder.Entity("Domain.ListaCompras.Entities.Status", b =>
+                {
+                    b.Navigation("ProdutoListas");
+                });
+
+            modelBuilder.Entity("Domain.ListaCompras.Entities.Usuario", b =>
+                {
+                    b.Navigation("UsuarioListas");
                 });
 #pragma warning restore 612, 618
         }

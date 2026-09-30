@@ -24,6 +24,7 @@ namespace Application.ListaCompras.Services
                 return ResultData<IEnumerable<HistoricoResponseDto>>.Error(result.Message);
 
             var response = result.Data
+                .OrderByDescending(x => x.DataRegistro)
                 .Select(HistoricoMapping.ToResponseDto)
                 .ToList();
 
@@ -34,40 +35,6 @@ namespace Application.ListaCompras.Services
         {
             var result = await _repository.GetByIdAsync(id);
 
-            return MapResult(result);
-        }
-
-        public async Task<ResultData<HistoricoResponseDto>> CreateAsync(HistoricoRequestDto request)
-        {
-            var entity = HistoricoMapping.ToEntity(request);
-            var result = await _repository.CreateAsync(entity);
-
-            return MapResult(result);
-        }
-
-        public async Task<ResultData<HistoricoResponseDto>> UpdateAsync(int id, HistoricoRequestDto request)
-        {
-            var existingResult = await _repository.GetByIdAsync(id);
-
-            if (!existingResult.IsSuccess || existingResult.Data is null)
-                return ResultData<HistoricoResponseDto>.Error(existingResult.Message);
-
-            HistoricoMapping.MapToEntity(request, existingResult.Data);
-
-            var updateResult = await _repository.UpdateAsync(existingResult.Data);
-
-            return MapResult(updateResult);
-        }
-
-        public async Task<ResultData<HistoricoResponseDto>> DeleteAsync(int id)
-        {
-            var result = await _repository.DeleteAsync(id);
-
-            return MapResult(result);
-        }
-
-        private static ResultData<HistoricoResponseDto> MapResult(ResultData<Historico> result)
-        {
             if (!result.IsSuccess || result.Data is null)
                 return ResultData<HistoricoResponseDto>.Error(result.Message);
 

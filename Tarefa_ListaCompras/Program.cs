@@ -39,6 +39,8 @@ builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
 var app = builder.Build();
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 // Middleware global de tratamento de exceções
 app.UseMiddleware<ExceptionMiddleware>();
 

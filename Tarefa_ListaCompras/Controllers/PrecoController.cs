@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.ListaCompras.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/precos")]
 public sealed class PrecoController : ControllerBase
 {
     private readonly IPrecoService _service;
@@ -50,10 +50,7 @@ public sealed class PrecoController : ControllerBase
         if (!result.IsSuccess || result.Data is null)
             return BadRequest(new { result.Message });
 
-        return CreatedAtAction(
-            nameof(GetByIdAsync),
-            new { id = result.Data.Id },
-            result.Data);
+        return Ok(result.Data);
     }
 
     [HttpPut("{id:int}")]

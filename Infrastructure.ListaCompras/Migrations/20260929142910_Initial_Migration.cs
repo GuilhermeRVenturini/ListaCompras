@@ -99,41 +99,6 @@ namespace Infrastructure.ListaCompras.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Historico",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Registro = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    ProdutoId = table.Column<int>(type: "integer", nullable: false),
-                    MercadoId = table.Column<int>(type: "integer", nullable: false),
-                    PrecoId = table.Column<int>(type: "integer", nullable: false),
-                    DataRegistro = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Historico", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Historico_Mercado_MercadoId",
-                        column: x => x.MercadoId,
-                        principalTable: "Mercado",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Historico_Preco_PrecoId",
-                        column: x => x.PrecoId,
-                        principalTable: "Preco",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Historico_Produto_ProdutoId",
-                        column: x => x.ProdutoId,
-                        principalTable: "Produto",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PrecoMercado",
                 columns: table => new
                 {
@@ -197,6 +162,64 @@ namespace Infrastructure.ListaCompras.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Historico",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Entidade = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    Operacao = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    Registro = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
+                    ProdutoId = table.Column<int>(type: "integer", nullable: true),
+                    ListaId = table.Column<int>(type: "integer", nullable: true),
+                    UsuarioId = table.Column<Guid>(type: "uuid", nullable: true),
+                    MercadoId = table.Column<int>(type: "integer", nullable: true),
+                    PrecoId = table.Column<int>(type: "integer", nullable: true),
+                    StatusId = table.Column<int>(type: "integer", nullable: true),
+                    DataRegistro = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Historico", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Historico_Lista_ListaId",
+                        column: x => x.ListaId,
+                        principalTable: "Lista",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Historico_Mercado_MercadoId",
+                        column: x => x.MercadoId,
+                        principalTable: "Mercado",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Historico_Preco_PrecoId",
+                        column: x => x.PrecoId,
+                        principalTable: "Preco",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Historico_Produto_ProdutoId",
+                        column: x => x.ProdutoId,
+                        principalTable: "Produto",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Historico_Status_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "Status",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Historico_Usuario_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuario",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UsuarioLista",
                 columns: table => new
                 {
@@ -221,6 +244,11 @@ namespace Infrastructure.ListaCompras.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Historico_ListaId",
+                table: "Historico",
+                column: "ListaId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Historico_MercadoId",
                 table: "Historico",
                 column: "MercadoId");
@@ -234,6 +262,16 @@ namespace Infrastructure.ListaCompras.Migrations
                 name: "IX_Historico_ProdutoId",
                 table: "Historico",
                 column: "ProdutoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Historico_StatusId",
+                table: "Historico",
+                column: "StatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Historico_UsuarioId",
+                table: "Historico",
+                column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PrecoMercado_MercadoId",

@@ -50,10 +50,7 @@ public sealed class ProdutoListaController : ControllerBase
         if (!result.IsSuccess || result.Data is null)
             return BadRequest(new { result.Message });
 
-        return CreatedAtAction(
-            nameof(GetByIdAsync),
-            new { produtoId = result.Data.ProdutoId, listaId = result.Data.ListaId },
-            result.Data);
+        return Ok(result.Data);
     }
 
     [HttpPut("{produtoId:int}/{listaId:int}")]

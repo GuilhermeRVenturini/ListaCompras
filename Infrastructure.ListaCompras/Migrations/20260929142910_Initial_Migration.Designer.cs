@@ -3,6 +3,7 @@ using System;
 using Infrastructure.ListaCompras.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.ListaCompras.Migrations
 {
     [DbContext(typeof(ListaCompras_DbContext))]
-    partial class ListaCompras_DbContextModelSnapshot : ModelSnapshot
+    [Migration("20260929142910_Initial_Migration")]
+    partial class Initial_Migration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -241,23 +244,6 @@ namespace Infrastructure.ListaCompras.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Status");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nome = "Pendente"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nome = "Comprado"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Nome = "Indisponível"
-                        });
                 });
 
             modelBuilder.Entity("Domain.ListaCompras.Entities.Usuario", b =>
