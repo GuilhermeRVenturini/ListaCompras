@@ -1,5 +1,6 @@
-﻿using Domain.ListaCompras.Interfaces;
+using Domain.ListaCompras.Interfaces;
 
+// contrato do repository de dados: só diz o que precisa ter, não mexe no banco aqui
 namespace Domain.ListaCompras.Interfaces
 {
     public interface IRepository<T, TId> :

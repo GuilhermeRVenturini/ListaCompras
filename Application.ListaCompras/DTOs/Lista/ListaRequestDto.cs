@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Application.ListaCompras.DTOs.Lista
 {
@@ -7,6 +7,7 @@ namespace Application.ListaCompras.DTOs.Lista
         public DateTime DataListaCriacao { get; init; }
 
         [Required]
+
         [MaxLength(64)]
         public string Nome { get; init; } = default!;
     }

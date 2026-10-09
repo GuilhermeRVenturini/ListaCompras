@@ -1,5 +1,6 @@
 namespace Application.ListaCompras.DTOs.ProdutoLista
 {
+
     public sealed class ProdutoListaResponseDto
     {
         public int ProdutoId { get; init; }

@@ -1,4 +1,4 @@
-﻿using Domain.ListaCompras.Common.Results;
+using Domain.ListaCompras.Common.Results;
 using Domain.ListaCompras.Entities;
 using Domain.ListaCompras.Interfaces;
 using Infrastructure.ListaCompras.Data;
@@ -6,12 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.ListaCompras.Repositories
 {
-    public sealed class UsuarioListaRepository : RepositoryBase<UsuarioLista>, IUsuarioListaRepository
+
+    public sealed class UsuarioListaRepository
+        : RepositoryBase<UsuarioLista>, IUsuarioListaRepository
     {
-        public UsuarioListaRepository(ListaCompras_DbContext context) : base(context)
+
+        // método que conversa com o DbContext pra fazer a operação no banco
+        public UsuarioListaRepository(ListaCompras_DbContext context)
+            : base(context)
         {
         }
 
+
+        // busca a lista toda; no usuário dá pra passar o nome pra filtrar
         public async Task<ResultData<IEnumerable<UsuarioLista>>> GetAllAsync()
         {
             try
@@ -20,101 +27,138 @@ namespace Infrastructure.ListaCompras.Repositories
                     .AsNoTracking()
                     .ToListAsync();
 
-                return ResultData<IEnumerable<UsuarioLista>>.Success(entities);
+                return ResultData<IEnumerable<UsuarioLista>>
+                    .Success(entities);
             }
             catch (Exception)
             {
-                return ResultData<IEnumerable<UsuarioLista>>.Error("Erro ao buscar os registros.");
+                return ResultData<IEnumerable<UsuarioLista>>
+                    .Error("Erro ao buscar os registros.");
             }
         }
 
-        public async Task<ResultData<IEnumerable<UsuarioLista>>> GetByListaIdAsync(int listaId)
+
+        public async Task<ResultData<IEnumerable<UsuarioLista>>> GetByListaIdAsync(
+            int listaId)
         {
             try
             {
                 var entities = await QueryWithRelationships()
                     .AsNoTracking()
+
+
                     .Where(x => x.ListaId == listaId)
                     .ToListAsync();
 
-                return ResultData<IEnumerable<UsuarioLista>>.Success(entities);
+                return ResultData<IEnumerable<UsuarioLista>>
+                    .Success(entities);
             }
             catch (Exception)
             {
-                return ResultData<IEnumerable<UsuarioLista>>.Error("Erro ao buscar os usuários da lista.");
+                return ResultData<IEnumerable<UsuarioLista>>
+                    .Error("Erro ao buscar os usuários da lista.");
             }
         }
 
-        public async Task<ResultData<IEnumerable<UsuarioLista>>> GetByUsuarioIdAsync(Guid usuarioId)
+
+        public async Task<ResultData<IEnumerable<UsuarioLista>>> GetByUsuarioIdAsync(
+            Guid usuarioId)
         {
             try
             {
                 var entities = await QueryWithRelationships()
                     .AsNoTracking()
+
+
                     .Where(x => x.UsuarioId == usuarioId)
                     .ToListAsync();
 
-                return ResultData<IEnumerable<UsuarioLista>>.Success(entities);
+                return ResultData<IEnumerable<UsuarioLista>>
+                    .Success(entities);
             }
             catch (Exception)
             {
-                return ResultData<IEnumerable<UsuarioLista>>.Error("Erro ao buscar as listas do usuário.");
+                return ResultData<IEnumerable<UsuarioLista>>
+                    .Error("Erro ao buscar as listas do usuário.");
             }
         }
 
-        public async Task<ResultData<UsuarioLista>> GetByIdAsync(int listaId, Guid usuarioId)
+
+        public async Task<ResultData<UsuarioLista>> GetByIdAsync(
+            int listaId,
+            Guid usuarioId)
         {
             try
             {
                 var entity = await QueryWithRelationships()
-                    .FirstOrDefaultAsync(x => x.ListaId == listaId && x.UsuarioId == usuarioId);
+                    .FirstOrDefaultAsync(
+                        x => x.ListaId == listaId &&
+                             x.UsuarioId == usuarioId);
 
                 if (entity is null)
-                    return ResultData<UsuarioLista>.Error("Registro não encontrado.");
+                    return ResultData<UsuarioLista>
+                        .Error("Registro não encontrado.");
 
-                return ResultData<UsuarioLista>.Success(entity);
+                return ResultData<UsuarioLista>
+                    .Success(entity);
             }
             catch (Exception)
             {
-                return ResultData<UsuarioLista>.Error("Erro ao buscar o registro.");
+                return ResultData<UsuarioLista>
+                    .Error("Erro ao buscar o registro.");
             }
         }
 
-        public async Task<ResultData<UsuarioLista>> CreateAsync(UsuarioLista entity)
+
+        public async Task<ResultData<UsuarioLista>> CreateAsync(
+            UsuarioLista entity)
         {
             try
             {
                 await _dbSet.AddAsync(entity);
+
                 await _context.SaveChangesAsync();
 
-                return ResultData<UsuarioLista>.Success(entity);
+                return ResultData<UsuarioLista>
+                    .Success(entity);
             }
             catch (DbUpdateException)
             {
-                return ResultData<UsuarioLista>.Error("Erro ao adicionar o usuário à lista.");
+                return ResultData<UsuarioLista>
+                    .Error("Erro ao adicionar o usuário à lista.");
             }
         }
 
-        public async Task<ResultData<UsuarioLista>> DeleteAsync(int listaId, Guid usuarioId)
+
+        public async Task<ResultData<UsuarioLista>> DeleteAsync(
+            int listaId,
+            Guid usuarioId)
         {
             try
             {
+
                 var result = await GetByIdAsync(listaId, usuarioId);
 
                 if (!result.IsSuccess || result.Data is null)
                     return result;
 
+
                 _dbSet.Remove(result.Data);
+
                 await _context.SaveChangesAsync();
 
-                return ResultData<UsuarioLista>.Success(result.Data);
+                return ResultData<UsuarioLista>
+                    .Success(result.Data);
             }
             catch (DbUpdateException)
             {
-                return ResultData<UsuarioLista>.Error("Erro ao remover o usuário da lista.");
+                return ResultData<UsuarioLista>
+                    .Error("Erro ao remover o usuário da lista.");
             }
         }
 
+
+        // método que conversa com o DbContext pra fazer a operação no banco
         private IQueryable<UsuarioLista> QueryWithRelationships()
         {
             return _dbSet

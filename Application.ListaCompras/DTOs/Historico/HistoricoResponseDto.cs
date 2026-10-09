@@ -1,5 +1,6 @@
 namespace Application.ListaCompras.DTOs.Historico
 {
+
     public sealed class HistoricoResponseDto
     {
         public int Id { get; init; }

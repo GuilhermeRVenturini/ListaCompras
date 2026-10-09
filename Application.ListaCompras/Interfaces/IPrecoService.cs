@@ -1,10 +1,13 @@
-﻿using Application.ListaCompras.DTOs.Preco;
+using Application.ListaCompras.DTOs.Preco;
 using Domain.ListaCompras.Common.Results;
+
 
 namespace Application.ListaCompras.Interfaces
 {
+
     public interface IPrecoService
     {
+
         Task<ResultData<IEnumerable<PrecoResponseDto>>> GetAllAsync();
 
         Task<ResultData<PrecoResponseDto>> GetByIdAsync(int id);

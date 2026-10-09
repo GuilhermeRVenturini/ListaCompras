@@ -1,4 +1,4 @@
-﻿using Domain.ListaCompras.Common.Results;
+using Domain.ListaCompras.Common.Results;
 using Domain.ListaCompras.Entities;
 using Domain.ListaCompras.Interfaces;
 using Infrastructure.ListaCompras.Data;
@@ -6,12 +6,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.ListaCompras.Repositories
 {
-    public sealed class PrecoMercadoRepository : RepositoryBase<PrecoMercado>, IPrecoMercadoRepository
+
+
+    public sealed class PrecoMercadoRepository
+        : RepositoryBase<PrecoMercado>, IPrecoMercadoRepository
     {
-        public PrecoMercadoRepository(ListaCompras_DbContext context) : base(context)
+
+        // método que conversa com o DbContext pra fazer a operação no banco
+        public PrecoMercadoRepository(ListaCompras_DbContext context)
+            : base(context)
         {
         }
 
+
+        // busca a lista toda; no usuário dá pra passar o nome pra filtrar
         public async Task<ResultData<IEnumerable<PrecoMercado>>> GetAllAsync()
         {
             try
@@ -20,116 +28,161 @@ namespace Infrastructure.ListaCompras.Repositories
                     .AsNoTracking()
                     .ToListAsync();
 
-                return ResultData<IEnumerable<PrecoMercado>>.Success(entities);
+                return ResultData<IEnumerable<PrecoMercado>>
+                    .Success(entities);
             }
             catch (Exception)
             {
-                return ResultData<IEnumerable<PrecoMercado>>.Error("Erro ao buscar os registros.");
+                return ResultData<IEnumerable<PrecoMercado>>
+                    .Error("Erro ao buscar os registros.");
             }
         }
 
-        public async Task<ResultData<IEnumerable<PrecoMercado>>> GetByProdutoIdAsync(int produtoId)
+
+        public async Task<ResultData<IEnumerable<PrecoMercado>>> GetByProdutoIdAsync(
+            int produtoId)
         {
             try
             {
                 var entities = await QueryWithRelationships()
                     .AsNoTracking()
+
+
                     .Where(x => x.ProdutoId == produtoId)
                     .ToListAsync();
 
-                return ResultData<IEnumerable<PrecoMercado>>.Success(entities);
+                return ResultData<IEnumerable<PrecoMercado>>
+                    .Success(entities);
             }
             catch (Exception)
             {
-                return ResultData<IEnumerable<PrecoMercado>>.Error("Erro ao buscar os preços do produto.");
+                return ResultData<IEnumerable<PrecoMercado>>
+                    .Error("Erro ao buscar os preços do produto.");
             }
         }
 
-        public async Task<ResultData<IEnumerable<PrecoMercado>>> GetByMercadoIdAsync(int mercadoId)
+
+        public async Task<ResultData<IEnumerable<PrecoMercado>>> GetByMercadoIdAsync(
+            int mercadoId)
         {
             try
             {
                 var entities = await QueryWithRelationships()
                     .AsNoTracking()
+
+
                     .Where(x => x.MercadoId == mercadoId)
                     .ToListAsync();
 
-                return ResultData<IEnumerable<PrecoMercado>>.Success(entities);
+                return ResultData<IEnumerable<PrecoMercado>>
+                    .Success(entities);
             }
             catch (Exception)
             {
-                return ResultData<IEnumerable<PrecoMercado>>.Error("Erro ao buscar os produtos do mercado.");
+                return ResultData<IEnumerable<PrecoMercado>>
+                    .Error("Erro ao buscar os produtos do mercado.");
             }
         }
 
-        public async Task<ResultData<PrecoMercado>> GetByIdAsync(int produtoId, int mercadoId)
+
+        public async Task<ResultData<PrecoMercado>> GetByIdAsync(
+            int produtoId,
+            int mercadoId)
         {
             try
             {
                 var entity = await QueryWithRelationships()
-                    .FirstOrDefaultAsync(x => x.ProdutoId == produtoId && x.MercadoId == mercadoId);
+                    .FirstOrDefaultAsync(
+                        x => x.ProdutoId == produtoId &&
+                             x.MercadoId == mercadoId);
 
                 if (entity is null)
-                    return ResultData<PrecoMercado>.Error("Registro não encontrado.");
+                    return ResultData<PrecoMercado>
+                        .Error("Registro não encontrado.");
 
-                return ResultData<PrecoMercado>.Success(entity);
+                return ResultData<PrecoMercado>
+                    .Success(entity);
             }
             catch (Exception)
             {
-                return ResultData<PrecoMercado>.Error("Erro ao buscar o registro.");
+                return ResultData<PrecoMercado>
+                    .Error("Erro ao buscar o registro.");
             }
         }
 
-        public async Task<ResultData<PrecoMercado>> CreateAsync(PrecoMercado entity)
+
+        public async Task<ResultData<PrecoMercado>> CreateAsync(
+            PrecoMercado entity)
         {
             try
             {
                 await _dbSet.AddAsync(entity);
+
                 await _context.SaveChangesAsync();
 
-                return ResultData<PrecoMercado>.Success(entity);
+                return ResultData<PrecoMercado>
+                    .Success(entity);
             }
             catch (DbUpdateException)
             {
-                return ResultData<PrecoMercado>.Error("Erro ao vincular o preço ao produto e ao mercado.");
+                return ResultData<PrecoMercado>
+                    .Error(
+                        "Erro ao vincular o preço ao produto e ao mercado.");
             }
         }
 
-        public async Task<ResultData<PrecoMercado>> UpdateAsync(PrecoMercado entity)
+
+        public async Task<ResultData<PrecoMercado>> UpdateAsync(
+            PrecoMercado entity)
         {
             try
             {
                 _dbSet.Update(entity);
+
                 await _context.SaveChangesAsync();
 
-                return ResultData<PrecoMercado>.Success(entity);
+                return ResultData<PrecoMercado>
+                    .Success(entity);
             }
             catch (DbUpdateException)
             {
-                return ResultData<PrecoMercado>.Error("Erro ao atualizar o preço do produto no mercado.");
+                return ResultData<PrecoMercado>
+                    .Error(
+                        "Erro ao atualizar o preço do produto no mercado.");
             }
         }
 
-        public async Task<ResultData<PrecoMercado>> DeleteAsync(int produtoId, int mercadoId)
+
+        public async Task<ResultData<PrecoMercado>> DeleteAsync(
+            int produtoId,
+            int mercadoId)
         {
             try
             {
+
                 var result = await GetByIdAsync(produtoId, mercadoId);
 
                 if (!result.IsSuccess || result.Data is null)
                     return result;
 
+
                 _dbSet.Remove(result.Data);
+
                 await _context.SaveChangesAsync();
 
-                return ResultData<PrecoMercado>.Success(result.Data);
+                return ResultData<PrecoMercado>
+                    .Success(result.Data);
             }
             catch (DbUpdateException)
             {
-                return ResultData<PrecoMercado>.Error("Erro ao remover o preço do produto no mercado.");
+                return ResultData<PrecoMercado>
+                    .Error(
+                        "Erro ao remover o preço do produto no mercado.");
             }
         }
 
+
+        // método que conversa com o DbContext pra fazer a operação no banco
         private IQueryable<PrecoMercado> QueryWithRelationships()
         {
             return _dbSet

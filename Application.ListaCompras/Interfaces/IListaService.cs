@@ -1,10 +1,12 @@
-﻿using Application.ListaCompras.DTOs.Lista;
+using Application.ListaCompras.DTOs.Lista;
 using Domain.ListaCompras.Common.Results;
 
 namespace Application.ListaCompras.Interfaces
 {
+
     public interface IListaService
     {
+
         Task<ResultData<IEnumerable<ListaResponseDto>>> GetAllAsync();
 
         Task<ResultData<ListaResponseDto>> GetByIdAsync(int id);

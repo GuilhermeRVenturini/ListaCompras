@@ -1,10 +1,14 @@
 using Application.ListaCompras.DTOs.ProdutoLista;
 using Domain.ListaCompras.Entities;
 
+// aqui faço a conversão de ProdutoLista entre entidade e DTO
 namespace Application.ListaCompras.Mappings
 {
+
     internal static class ProdutoListaMapping
     {
+
+        // pega o DTO e monta uma entidade pra usar internamente
         public static ProdutoLista ToEntity(int produtoId, int listaId, ProdutoListaRequestDto request)
         {
             return new ProdutoLista
@@ -16,12 +20,14 @@ namespace Application.ListaCompras.Mappings
             };
         }
 
-        public static void MapToEntity(ProdutoListaRequestDto request, ProdutoLista entity)
+        // troca os dados na entidade que já existe, sem criar outra
+        public static void MapToExistingEntity(ProdutoListaRequestDto request, ProdutoLista entity)
         {
             entity.StatusId = request.StatusId;
             entity.QuantidadeEstoque = request.QuantidadeEstoque;
         }
 
+        // monta o DTO que vai voltar na resposta
         public static ProdutoListaResponseDto ToResponseDto(ProdutoLista entity)
         {
             return new ProdutoListaResponseDto

@@ -1,5 +1,6 @@
-﻿namespace Application.ListaCompras.DTOs.Usuario
+namespace Application.ListaCompras.DTOs.Usuario
 {
+
     public sealed class UsuarioResponseDto
     {
         public Guid Id { get; init; }

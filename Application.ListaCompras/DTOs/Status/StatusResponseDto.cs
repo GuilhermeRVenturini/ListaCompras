@@ -1,5 +1,6 @@
-﻿namespace Application.ListaCompras.DTOs.Status
+namespace Application.ListaCompras.DTOs.Status
 {
+
     public sealed class StatusResponseDto
     {
         public int Id { get; init; }

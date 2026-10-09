@@ -1,4 +1,4 @@
-﻿using Domain.ListaCompras.Common.Results;
+using Domain.ListaCompras.Common.Results;
 using Domain.ListaCompras.Entities;
 
 namespace Domain.ListaCompras.Interfaces

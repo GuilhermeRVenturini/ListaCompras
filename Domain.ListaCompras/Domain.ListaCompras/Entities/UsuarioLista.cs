@@ -1,4 +1,4 @@
-﻿namespace Domain.ListaCompras.Entities
+namespace Domain.ListaCompras.Entities
 {
     public class UsuarioLista
     {

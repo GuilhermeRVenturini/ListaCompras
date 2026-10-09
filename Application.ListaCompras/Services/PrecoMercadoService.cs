@@ -7,8 +7,10 @@ using Domain.ListaCompras.Interfaces;
 
 namespace Application.ListaCompras.Services
 {
+
     public sealed class PrecoMercadoService : IPrecoMercadoService
     {
+
         private readonly IPrecoMercadoRepository _repository;
         private readonly IRepository<Produto, int> _produtoRepository;
         private readonly IRepository<Mercado, int> _mercadoRepository;
@@ -26,37 +28,49 @@ namespace Application.ListaCompras.Services
             _precoRepository = precoRepository;
         }
 
+        // busca a lista toda; no usuário dá pra passar o nome pra filtrar
         public async Task<ResultData<IEnumerable<PrecoMercadoResponseDto>>> GetAllAsync()
         {
+
             var result = await _repository.GetAllAsync();
+
             return MapCollectionResult(result);
         }
 
+        // aqui faço a operação e trato o retorno antes de passar pra API
         public async Task<ResultData<IEnumerable<PrecoMercadoResponseDto>>> GetByProdutoAsync(int produtoId)
         {
+
             var produtoResult = await _produtoRepository.GetByIdAsync(produtoId);
 
             if (!produtoResult.IsSuccess || produtoResult.Data is null)
                 return ResultData<IEnumerable<PrecoMercadoResponseDto>>.Error("Produto não encontrado.");
 
             var result = await _repository.GetByProdutoIdAsync(produtoId);
+
             return MapCollectionResult(result);
         }
 
+        // aqui faço a operação e trato o retorno antes de passar pra API
         public async Task<ResultData<IEnumerable<PrecoMercadoResponseDto>>> GetByMercadoAsync(int mercadoId)
         {
+
             var mercadoResult = await _mercadoRepository.GetByIdAsync(mercadoId);
 
             if (!mercadoResult.IsSuccess || mercadoResult.Data is null)
                 return ResultData<IEnumerable<PrecoMercadoResponseDto>>.Error("Mercado não encontrado.");
 
             var result = await _repository.GetByMercadoIdAsync(mercadoId);
+
             return MapCollectionResult(result);
         }
 
+        // procura um registro pelo id, se não achar volta erro
         public async Task<ResultData<PrecoMercadoResponseDto>> GetByIdAsync(int produtoId, int mercadoId)
         {
+
             var result = await _repository.GetByIdAsync(produtoId, mercadoId);
+
             return MapResult(result);
         }
 
@@ -65,19 +79,24 @@ namespace Application.ListaCompras.Services
             int mercadoId,
             PrecoMercadoRequestDto request)
         {
+
             var produtoResult = await _produtoRepository.GetByIdAsync(produtoId);
+
             if (!produtoResult.IsSuccess || produtoResult.Data is null)
                 return ResultData<PrecoMercadoResponseDto>.Error("Produto não encontrado.");
 
             var mercadoResult = await _mercadoRepository.GetByIdAsync(mercadoId);
+
             if (!mercadoResult.IsSuccess || mercadoResult.Data is null)
                 return ResultData<PrecoMercadoResponseDto>.Error("Mercado não encontrado.");
 
             var precoResult = await _precoRepository.GetByIdAsync(request.PrecoId);
+
             if (!precoResult.IsSuccess || precoResult.Data is null)
                 return ResultData<PrecoMercadoResponseDto>.Error("Preço não encontrado.");
 
             var existingResult = await _repository.GetByIdAsync(produtoId, mercadoId);
+
             if (existingResult.IsSuccess && existingResult.Data is not null)
                 return ResultData<PrecoMercadoResponseDto>.Error("Este produto já possui um preço vinculado a este mercado.");
 
@@ -87,6 +106,7 @@ namespace Application.ListaCompras.Services
             entity.Preco = precoResult.Data;
 
             var result = await _repository.CreateAsync(entity);
+
             return MapResult(result);
         }
 
@@ -95,43 +115,53 @@ namespace Application.ListaCompras.Services
             int mercadoId,
             PrecoMercadoRequestDto request)
         {
+
             var existingResult = await _repository.GetByIdAsync(produtoId, mercadoId);
 
             if (!existingResult.IsSuccess || existingResult.Data is null)
                 return ResultData<PrecoMercadoResponseDto>.Error("Preço do produto neste mercado não encontrado.");
 
             var precoResult = await _precoRepository.GetByIdAsync(request.PrecoId);
+
             if (!precoResult.IsSuccess || precoResult.Data is null)
                 return ResultData<PrecoMercadoResponseDto>.Error("Preço não encontrado.");
 
-            PrecoMercadoMapping.MapToEntity(request, existingResult.Data);
+            PrecoMercadoMapping.MapToExistingEntity(request, existingResult.Data);
             existingResult.Data.Preco = precoResult.Data;
 
             var updateResult = await _repository.UpdateAsync(existingResult.Data);
+
             return MapResult(updateResult);
         }
 
+        // remove o registro usando o id
         public async Task<ResultData<PrecoMercadoResponseDto>> DeleteAsync(int produtoId, int mercadoId)
         {
+
             var result = await _repository.DeleteAsync(produtoId, mercadoId);
+
             return MapResult(result);
         }
 
         private static ResultData<IEnumerable<PrecoMercadoResponseDto>> MapCollectionResult(
             ResultData<IEnumerable<PrecoMercado>> result)
         {
+
             if (!result.IsSuccess || result.Data is null)
                 return ResultData<IEnumerable<PrecoMercadoResponseDto>>.Error(result.Message);
 
             var response = result.Data
+
                 .Select(PrecoMercadoMapping.ToResponseDto)
                 .ToList();
 
             return ResultData<IEnumerable<PrecoMercadoResponseDto>>.Success(response);
         }
 
+        // evita repetir o mesmo código pra transformar o resultado em DTO
         private static ResultData<PrecoMercadoResponseDto> MapResult(ResultData<PrecoMercado> result)
         {
+
             if (!result.IsSuccess || result.Data is null)
                 return ResultData<PrecoMercadoResponseDto>.Error(result.Message);
 

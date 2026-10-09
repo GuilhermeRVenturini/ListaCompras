@@ -2,6 +2,7 @@ using Application.ListaCompras.DTOs.Preco;
 using Application.ListaCompras.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
+// controller de Preco: recebe a requisição e manda pro service resolver
 namespace API.ListaCompras.Controllers;
 
 [ApiController]
@@ -10,12 +11,14 @@ public sealed class PrecoController : ControllerBase
 {
     private readonly IPrecoService _service;
 
+    // endpoint: recebe os parâmetros, chama o service e devolve a resposta HTTP
     public PrecoController(IPrecoService service)
     {
         _service = service;
     }
 
     [HttpGet]
+    // busca a lista toda; no usuário dá pra passar o nome pra filtrar
     public async Task<IActionResult> GetAllAsync()
     {
         var result = await _service.GetAllAsync();
@@ -27,13 +30,14 @@ public sealed class PrecoController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
+    // procura um registro pelo id, se não achar volta erro
     public async Task<IActionResult> GetByIdAsync(int id)
     {
         var result = await _service.GetByIdAsync(id);
 
         if (!result.IsSuccess || result.Data is null)
         {
-            if (result.Message.Equals("Registro não encontrado.", StringComparison.OrdinalIgnoreCase))
+            if (result.Message.Contains("não encontrad", StringComparison.OrdinalIgnoreCase))
                 return NotFound(new { result.Message });
 
             return BadRequest(new { result.Message });
@@ -43,6 +47,7 @@ public sealed class PrecoController : ControllerBase
     }
 
     [HttpPost]
+    // cria um registro novo e devolve o resultado
     public async Task<IActionResult> CreateAsync([FromBody] PrecoRequestDto request)
     {
         var result = await _service.CreateAsync(request);
@@ -53,14 +58,15 @@ public sealed class PrecoController : ControllerBase
         return Ok(result.Data);
     }
 
-    [HttpPut("{id:int}")]
+    [HttpPatch("{id:int}")]
+    // acha o registro e atualiza os dados dele
     public async Task<IActionResult> UpdateAsync(int id, [FromBody] PrecoRequestDto request)
     {
         var result = await _service.UpdateAsync(id, request);
 
         if (!result.IsSuccess || result.Data is null)
         {
-            if (result.Message.Equals("Registro não encontrado.", StringComparison.OrdinalIgnoreCase))
+            if (result.Message.Contains("não encontrad", StringComparison.OrdinalIgnoreCase))
                 return NotFound(new { result.Message });
 
             return BadRequest(new { result.Message });
@@ -70,13 +76,14 @@ public sealed class PrecoController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    // remove o registro usando o id
     public async Task<IActionResult> DeleteAsync(int id)
     {
         var result = await _service.DeleteAsync(id);
 
         if (!result.IsSuccess || result.Data is null)
         {
-            if (result.Message.Equals("Registro não encontrado.", StringComparison.OrdinalIgnoreCase))
+            if (result.Message.Contains("não encontrad", StringComparison.OrdinalIgnoreCase))
                 return NotFound(new { result.Message });
 
             return BadRequest(new { result.Message });

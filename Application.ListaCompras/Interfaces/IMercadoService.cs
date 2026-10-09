@@ -1,10 +1,13 @@
-﻿using Application.ListaCompras.DTOs.Mercado;
+using Application.ListaCompras.DTOs.Mercado;
 using Domain.ListaCompras.Common.Results;
+
 
 namespace Application.ListaCompras.Interfaces
 {
+
     public interface IMercadoService
     {
+
         Task<ResultData<IEnumerable<MercadoResponseDto>>> GetAllAsync();
 
         Task<ResultData<MercadoResponseDto>> GetByIdAsync(int id);
