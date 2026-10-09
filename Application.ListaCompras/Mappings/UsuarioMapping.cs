@@ -1,14 +1,12 @@
 using Application.ListaCompras.DTOs.Usuario;
 using Domain.ListaCompras.Entities;
 
-// aqui faço a conversão de Usuario entre entidade e DTO
 namespace Application.ListaCompras.Mappings
 {
 
     internal static class UsuarioMapping
     {
 
-        // pega o DTO e monta uma entidade pra usar internamente
         public static Usuario ToEntity(UsuarioRequestDto request)
         {
             return new Usuario
@@ -19,15 +17,21 @@ namespace Application.ListaCompras.Mappings
             };
         }
 
-        // troca os dados na entidade que já existe, sem criar outra
-        public static void MapToExistingEntity(UsuarioRequestDto request, Usuario entity)
+        /// <summary>
+        /// Copia para o usuário carregado apenas os campos informados no PATCH.
+        /// A entidade existente é reaproveitada para preservar os demais valores
+        /// e o rastreamento de alterações do Entity Framework.
+        /// </summary>
+        public static void MapToExistingEntity(UsuarioPatchDto request, Usuario entity)
         {
-            entity.Cpf = request.Cpf;
-            entity.Nome = request.Nome;
-            entity.Email = request.Email;
+            if (request.Cpf is not null)
+                entity.Cpf = request.Cpf;
+            if (request.Nome is not null)
+                entity.Nome = request.Nome;
+            if (request.Email is not null)
+                entity.Email = request.Email;
         }
 
-        // monta o DTO que vai voltar na resposta
         public static UsuarioResponseDto ToResponseDto(Usuario entity)
         {
             return new UsuarioResponseDto

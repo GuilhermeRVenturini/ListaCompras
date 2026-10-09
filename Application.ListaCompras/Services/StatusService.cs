@@ -13,13 +13,11 @@ namespace Application.ListaCompras.Services
 
         private readonly IRepository<Status, int> _repository;
 
-        // aqui faço a operação e trato o retorno antes de passar pra API
         public StatusService(IRepository<Status, int> repository)
         {
             _repository = repository;
         }
 
-        // busca a lista toda; no usuário dá pra passar o nome pra filtrar
         public async Task<ResultData<IEnumerable<StatusResponseDto>>> GetAllAsync()
         {
 
@@ -36,7 +34,6 @@ namespace Application.ListaCompras.Services
             return ResultData<IEnumerable<StatusResponseDto>>.Success(response);
         }
 
-        // procura um registro pelo id, se não achar volta erro
         public async Task<ResultData<StatusResponseDto>> GetByIdAsync(int id)
         {
 
@@ -45,7 +42,6 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
-        // evita repetir o mesmo código pra transformar o resultado em DTO
         private static ResultData<StatusResponseDto> MapResult(ResultData<Status> result)
         {
 

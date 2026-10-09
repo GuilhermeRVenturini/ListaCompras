@@ -1,14 +1,12 @@
 using Application.ListaCompras.DTOs.Preco;
 using Domain.ListaCompras.Entities;
 
-// aqui faço a conversão de Preco entre entidade e DTO
 namespace Application.ListaCompras.Mappings
 {
 
     internal static class PrecoMapping
     {
 
-        // pega o DTO e monta uma entidade pra usar internamente
         public static Preco ToEntity(PrecoRequestDto request)
         {
             return new Preco
@@ -18,14 +16,14 @@ namespace Application.ListaCompras.Mappings
             };
         }
 
-        // troca os dados na entidade que já existe, sem criar outra
-        public static void MapToExistingEntity(PrecoRequestDto request, Preco entity)
+        public static void MapToExistingEntity(PrecoPatchDto request, Preco entity)
         {
-            entity.Valor = request.Valor;
-            entity.Desconto = request.Desconto;
+            if (request.Valor is not null)
+                entity.Valor = request.Valor.Value;
+            if (request.Desconto is not null)
+                entity.Desconto = request.Desconto.Value;
         }
 
-        // monta o DTO que vai voltar na resposta
         public static PrecoResponseDto ToResponseDto(Preco entity)
         {
             return new PrecoResponseDto

@@ -10,15 +10,11 @@ namespace Infrastructure.ListaCompras.Repositories
 
         protected readonly ListaCompras_DbContext _context;
 
-
         protected readonly DbSet<T> _dbSet;
 
-
-        // método que conversa com o DbContext pra fazer a operação no banco
         protected RepositoryBase(ListaCompras_DbContext context)
         {
             _context = context;
-
 
             _dbSet = context.Set<T>();
         }

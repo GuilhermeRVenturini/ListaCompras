@@ -13,13 +13,11 @@ namespace Application.ListaCompras.Services
 
         private readonly IRepository<Historico, int> _repository;
 
-        // aqui faço a operação e trato o retorno antes de passar pra API
         public HistoricoService(IRepository<Historico, int> repository)
         {
             _repository = repository;
         }
 
-        // busca a lista toda; no usuário dá pra passar o nome pra filtrar
         public async Task<ResultData<IEnumerable<HistoricoResponseDto>>> GetAllAsync()
         {
 
@@ -37,7 +35,6 @@ namespace Application.ListaCompras.Services
             return ResultData<IEnumerable<HistoricoResponseDto>>.Success(response);
         }
 
-        // procura um registro pelo id, se não achar volta erro
         public async Task<ResultData<HistoricoResponseDto>> GetByIdAsync(int id)
         {
 

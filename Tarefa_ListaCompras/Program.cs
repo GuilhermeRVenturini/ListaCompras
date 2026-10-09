@@ -11,7 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException(
         "A connection string 'DefaultConnection' n�o foi configurada.");
@@ -19,17 +18,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ListaCompras_DbContext>(options =>
     options.UseNpgsql(connectionString));
 
-
-// aqui a gente registra os services e repositories
-// ai quando um controller precisar de algum deles
-// o proprio .net ja cria e entrega tudo certinho
-// assim n precisa ficar dando new em tudo
-
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped<IPrecoMercadoRepository, PrecoMercadoRepository>();
 builder.Services.AddScoped<IProdutoListaRepository, ProdutoListaRepository>();
 builder.Services.AddScoped<IUsuarioListaRepository, UsuarioListaRepository>();
-
 
 builder.Services.AddScoped<IHistoricoService, HistoricoService>();
 builder.Services.AddScoped<IListaService, ListaService>();
@@ -45,7 +37,6 @@ builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 var app = builder.Build();
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
 
 app.UseMiddleware<ExceptionMiddleware>();
 

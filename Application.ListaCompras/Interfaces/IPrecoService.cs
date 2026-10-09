@@ -1,7 +1,6 @@
 using Application.ListaCompras.DTOs.Preco;
 using Domain.ListaCompras.Common.Results;
 
-
 namespace Application.ListaCompras.Interfaces
 {
 
@@ -14,7 +13,7 @@ namespace Application.ListaCompras.Interfaces
 
         Task<ResultData<PrecoResponseDto>> CreateAsync(PrecoRequestDto request);
 
-        Task<ResultData<PrecoResponseDto>> UpdateAsync(int id, PrecoRequestDto request);
+        Task<ResultData<PrecoResponseDto>> UpdateAsync(int id, PrecoPatchDto request);
 
         Task<ResultData<PrecoResponseDto>> DeleteAsync(int id);
     }

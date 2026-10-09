@@ -1,7 +1,6 @@
 using Application.ListaCompras.DTOs.PrecoMercado;
 using Domain.ListaCompras.Common.Results;
 
-
 namespace Application.ListaCompras.Interfaces
 {
 
@@ -18,7 +17,7 @@ namespace Application.ListaCompras.Interfaces
 
         Task<ResultData<PrecoMercadoResponseDto>> CreateAsync(int produtoId, int mercadoId, PrecoMercadoRequestDto request);
 
-        Task<ResultData<PrecoMercadoResponseDto>> UpdateAsync(int produtoId, int mercadoId, PrecoMercadoRequestDto request);
+        Task<ResultData<PrecoMercadoResponseDto>> UpdateAsync(int produtoId, int mercadoId, PrecoMercadoPatchDto request);
 
         Task<ResultData<PrecoMercadoResponseDto>> DeleteAsync(int produtoId, int mercadoId);
     }

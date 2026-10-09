@@ -1,22 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.ListaCompras.Middlewares;
-// basicamente esse cara fica vendo se da algum erro na requisição
-// se tiver tudo certo ele só deixa continuar normal
-// mas se alguma coisa der ruim, ele pega o erro
-// e manda uma resposta pro usuario ao inves de deixar a api quebrar
 
 public sealed class ExceptionMiddleware
 {
 
     private readonly RequestDelegate _next;
 
-
     private readonly ILogger<ExceptionMiddleware> _logger;
 
-
     private readonly IWebHostEnvironment _environment;
-
 
     public ExceptionMiddleware(
         RequestDelegate next,
@@ -28,8 +21,15 @@ public sealed class ExceptionMiddleware
         _environment = environment;
     }
 
-
-    // deixa a requisição passar e captura exceções se alguma coisa der ruim
+    /// <summary>
+    /// Intercepta erros não tratados durante a execução da requisição.
+    /// <list type="number">
+    /// <item>Executa o próximo componente da pipeline.</item>
+    /// <item>Registra método, rota e exceção se ocorrer uma falha.</item>
+    /// <item>Retorna uma resposta <c>ProblemDetails</c> com código HTTP e identificador de rastreio.</item>
+    /// </list>
+    /// A mensagem original da exceção só é exposta em ambiente de desenvolvimento.
+    /// </summary>
     public async Task InvokeAsync(HttpContext context)
     {
         try
@@ -46,11 +46,9 @@ public sealed class ExceptionMiddleware
                 context.Request.Method,
                 context.Request.Path);
 
-
             await HandleExceptionAsync(context, exception);
         }
     }
-
 
     private async Task HandleExceptionAsync(
         HttpContext context,
@@ -64,14 +62,12 @@ public sealed class ExceptionMiddleware
             _ => StatusCodes.Status500InternalServerError
         };
 
-
         var title = statusCode switch
         {
             StatusCodes.Status400BadRequest => "Requisição inválida.",
             StatusCodes.Status404NotFound => "Recurso não encontrado.",
             _ => "Ocorreu um erro interno no servidor."
         };
-
 
         var problemDetails = new ProblemDetails
         {
@@ -82,19 +78,14 @@ public sealed class ExceptionMiddleware
                 ? exception.Message
                 : "Não foi possível concluir a operação.",
 
-
             Instance = context.Request.Path
         };
 
-
         problemDetails.Extensions["traceId"] = context.TraceIdentifier;
-
 
         context.Response.StatusCode = statusCode;
 
-
         context.Response.ContentType = "application/problem+json";
-
 
         await context.Response.WriteAsJsonAsync(problemDetails);
     }

@@ -1,7 +1,6 @@
 using Application.ListaCompras.DTOs.Mercado;
 using Domain.ListaCompras.Common.Results;
 
-
 namespace Application.ListaCompras.Interfaces
 {
 
@@ -14,7 +13,7 @@ namespace Application.ListaCompras.Interfaces
 
         Task<ResultData<MercadoResponseDto>> CreateAsync(MercadoRequestDto request);
 
-        Task<ResultData<MercadoResponseDto>> UpdateAsync(int id, MercadoRequestDto request);
+        Task<ResultData<MercadoResponseDto>> UpdateAsync(int id, MercadoPatchDto request);
 
         Task<ResultData<MercadoResponseDto>> DeleteAsync(int id);
     }

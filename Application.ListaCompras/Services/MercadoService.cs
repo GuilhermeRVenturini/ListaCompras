@@ -1,5 +1,6 @@
 using Application.ListaCompras.DTOs.Mercado;
 using Application.ListaCompras.Interfaces;
+using Application.ListaCompras.Validation;
 using Application.ListaCompras.Mappings;
 using Domain.ListaCompras.Common.Results;
 using Domain.ListaCompras.Entities;
@@ -13,13 +14,11 @@ namespace Application.ListaCompras.Services
 
         private readonly IRepository<Mercado, int> _repository;
 
-        // aqui faço a operação e trato o retorno antes de passar pra API
         public MercadoService(IRepository<Mercado, int> repository)
         {
             _repository = repository;
         }
 
-        // busca a lista toda; no usuário dá pra passar o nome pra filtrar
         public async Task<ResultData<IEnumerable<MercadoResponseDto>>> GetAllAsync()
         {
 
@@ -36,7 +35,6 @@ namespace Application.ListaCompras.Services
             return ResultData<IEnumerable<MercadoResponseDto>>.Success(response);
         }
 
-        // procura um registro pelo id, se não achar volta erro
         public async Task<ResultData<MercadoResponseDto>> GetByIdAsync(int id)
         {
 
@@ -45,7 +43,6 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
-        // cria um registro novo e devolve o resultado
         public async Task<ResultData<MercadoResponseDto>> CreateAsync(MercadoRequestDto request)
         {
 
@@ -56,9 +53,11 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
-        // acha o registro e atualiza os dados dele
-        public async Task<ResultData<MercadoResponseDto>> UpdateAsync(int id, MercadoRequestDto request)
+        public async Task<ResultData<MercadoResponseDto>> UpdateAsync(int id, MercadoPatchDto request)
         {
+            var erroPatch = PatchValidator.Validate(request);
+            if (erroPatch is not null)
+                return ResultData<MercadoResponseDto>.Error(erroPatch);
 
             var existingResult = await _repository.GetByIdAsync(id);
 
@@ -72,7 +71,6 @@ namespace Application.ListaCompras.Services
             return MapResult(updateResult);
         }
 
-        // remove o registro usando o id
         public async Task<ResultData<MercadoResponseDto>> DeleteAsync(int id)
         {
 
@@ -81,7 +79,6 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
-        // evita repetir o mesmo código pra transformar o resultado em DTO
         private static ResultData<MercadoResponseDto> MapResult(ResultData<Mercado> result)
         {
 

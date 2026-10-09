@@ -1,11 +1,10 @@
 using Application.ListaCompras.DTOs.Produto;
 using Application.ListaCompras.Interfaces;
+using Application.ListaCompras.Validation;
 using Application.ListaCompras.Mappings;
 using Domain.ListaCompras.Common.Results;
 using Domain.ListaCompras.Entities;
 using Domain.ListaCompras.Interfaces;
-
-
 
 namespace Application.ListaCompras.Services
 {
@@ -15,13 +14,11 @@ namespace Application.ListaCompras.Services
 
         private readonly IRepository<Produto, int> _repository;
 
-        // aqui faço a operação e trato o retorno antes de passar pra API
         public ProdutoService(IRepository<Produto, int> repository)
         {
             _repository = repository;
         }
 
-        // busca a lista toda; no usuário dá pra passar o nome pra filtrar
         public async Task<ResultData<IEnumerable<ProdutoResponseDto>>> GetAllAsync()
         {
 
@@ -38,7 +35,6 @@ namespace Application.ListaCompras.Services
             return ResultData<IEnumerable<ProdutoResponseDto>>.Success(response);
         }
 
-        // procura um registro pelo id, se não achar volta erro
         public async Task<ResultData<ProdutoResponseDto>> GetByIdAsync(int id)
         {
 
@@ -47,14 +43,8 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
-        // cria um registro novo e devolve o resultado
         public async Task<ResultData<ProdutoResponseDto>> CreateAsync(ProdutoRequestDto request)
         {
-            // aqui chega o produto que o controller mandou
-            // primeiro vemos se ta tudo certo com os dados
-            // dps transformamos o dto em produto de verdade
-            // mandamos pro repository salvar no banco
-            // e no final devolvemos o resultado pro controller
 
             var entity = ProdutoMapping.ToEntity(request);
 
@@ -63,13 +53,12 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
-        // acha o registro e atualiza os dados dele
-        public async Task<ResultData<ProdutoResponseDto>> UpdateAsync(int id, ProdutoRequestDto request)
+        public async Task<ResultData<ProdutoResponseDto>> UpdateAsync(int id, ProdutoPatchDto request)
         {
-            // antes de mandar salvar a gente confere algumas coisas
-            // tipo se os ids existem e se a ligação ja n foi criada
-            // pq se mandar qualquer coisa direto pro banco
-            // pode acabar dando erro ou cadastrando coisa repetida
+            var erroPatch = PatchValidator.Validate(request);
+            if (erroPatch is not null)
+                return ResultData<ProdutoResponseDto>.Error(erroPatch);
+
             var existingResult = await _repository.GetByIdAsync(id);
 
             if (!existingResult.IsSuccess || existingResult.Data is null)
@@ -82,7 +71,6 @@ namespace Application.ListaCompras.Services
             return MapResult(updateResult);
         }
 
-        // remove o registro usando o id
         public async Task<ResultData<ProdutoResponseDto>> DeleteAsync(int id)
         {
 
@@ -91,7 +79,6 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
-        // evita repetir o mesmo código pra transformar o resultado em DTO
         private static ResultData<ProdutoResponseDto> MapResult(ResultData<Produto> result)
         {
 

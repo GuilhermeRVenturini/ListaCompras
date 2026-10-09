@@ -2,7 +2,6 @@ using Application.ListaCompras.DTOs.Preco;
 using Application.ListaCompras.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-// controller de Preco: recebe a requisição e manda pro service resolver
 namespace API.ListaCompras.Controllers;
 
 [ApiController]
@@ -11,14 +10,13 @@ public sealed class PrecoController : ControllerBase
 {
     private readonly IPrecoService _service;
 
-    // endpoint: recebe os parâmetros, chama o service e devolve a resposta HTTP
     public PrecoController(IPrecoService service)
     {
         _service = service;
     }
 
     [HttpGet]
-    // busca a lista toda; no usuário dá pra passar o nome pra filtrar
+
     public async Task<IActionResult> GetAllAsync()
     {
         var result = await _service.GetAllAsync();
@@ -30,7 +28,6 @@ public sealed class PrecoController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    // procura um registro pelo id, se não achar volta erro
     public async Task<IActionResult> GetByIdAsync(int id)
     {
         var result = await _service.GetByIdAsync(id);
@@ -47,7 +44,7 @@ public sealed class PrecoController : ControllerBase
     }
 
     [HttpPost]
-    // cria um registro novo e devolve o resultado
+
     public async Task<IActionResult> CreateAsync([FromBody] PrecoRequestDto request)
     {
         var result = await _service.CreateAsync(request);
@@ -59,8 +56,7 @@ public sealed class PrecoController : ControllerBase
     }
 
     [HttpPatch("{id:int}")]
-    // acha o registro e atualiza os dados dele
-    public async Task<IActionResult> UpdateAsync(int id, [FromBody] PrecoRequestDto request)
+    public async Task<IActionResult> UpdateAsync(int id, [FromBody] PrecoPatchDto request)
     {
         var result = await _service.UpdateAsync(id, request);
 
@@ -76,7 +72,6 @@ public sealed class PrecoController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    // remove o registro usando o id
     public async Task<IActionResult> DeleteAsync(int id)
     {
         var result = await _service.DeleteAsync(id);

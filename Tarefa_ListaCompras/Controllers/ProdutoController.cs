@@ -2,7 +2,6 @@ using Application.ListaCompras.DTOs.Produto;
 using Application.ListaCompras.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-// controller de Produto: recebe a requisição e manda pro service resolver
 namespace API.ListaCompras.Controllers;
 
 [ApiController]
@@ -24,7 +23,7 @@ public sealed class ProdutoController : ControllerBase
     }
 
     [HttpGet]
-    // busca a lista toda; no usuário dá pra passar o nome pra filtrar
+
     public async Task<IActionResult> GetAllAsync()
     {
         var result = await _produtoService.GetAllAsync();
@@ -44,7 +43,6 @@ public sealed class ProdutoController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    // procura um registro pelo id, se não achar volta erro
     public async Task<IActionResult> GetByIdAsync(int id)
     {
         var result = await _produtoService.GetByIdAsync(id);
@@ -64,7 +62,7 @@ public sealed class ProdutoController : ControllerBase
     }
 
     [HttpPost]
-    // cria um registro novo e devolve o resultado
+
     public async Task<IActionResult> CreateAsync([FromBody] ProdutoRequestDto request)
     {
         var result = await _produtoService.CreateAsync(request);
@@ -84,8 +82,7 @@ public sealed class ProdutoController : ControllerBase
     }
 
     [HttpPatch("{id:int}")]
-    // acha o registro e atualiza os dados dele
-    public async Task<IActionResult> UpdateAsync(int id, [FromBody] ProdutoRequestDto request)
+    public async Task<IActionResult> UpdateAsync(int id, [FromBody] ProdutoPatchDto request)
     {
         var result = await _produtoService.UpdateAsync(id, request);
 
@@ -104,7 +101,6 @@ public sealed class ProdutoController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    // remove o registro usando o id
     public async Task<IActionResult> DeleteAsync(int id)
     {
         var result = await _produtoService.DeleteAsync(id);
@@ -124,7 +120,6 @@ public sealed class ProdutoController : ControllerBase
     }
 
     [HttpGet("{produtoId:int}/listas")]
-    // endpoint: recebe os parâmetros, chama o service e devolve a resposta HTTP
     public async Task<IActionResult> GetListasAsync(int produtoId)
     {
         var result = await _produtoListaService.GetByProdutoAsync(produtoId);
@@ -144,7 +139,6 @@ public sealed class ProdutoController : ControllerBase
     }
 
     [HttpGet("{produtoId:int}/precos")]
-    // endpoint: recebe os parâmetros, chama o service e devolve a resposta HTTP
     public async Task<IActionResult> GetPrecosAsync(int produtoId)
     {
         var result = await _precoMercadoService.GetByProdutoAsync(produtoId);

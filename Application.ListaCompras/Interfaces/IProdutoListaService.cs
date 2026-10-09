@@ -1,7 +1,6 @@
 using Application.ListaCompras.DTOs.ProdutoLista;
 using Domain.ListaCompras.Common.Results;
 
-
 namespace Application.ListaCompras.Interfaces
 {
 
@@ -18,7 +17,7 @@ namespace Application.ListaCompras.Interfaces
 
         Task<ResultData<ProdutoListaResponseDto>> CreateAsync(int listaId, int produtoId, ProdutoListaRequestDto request);
 
-        Task<ResultData<ProdutoListaResponseDto>> UpdateAsync(int listaId, int produtoId, ProdutoListaRequestDto request);
+        Task<ResultData<ProdutoListaResponseDto>> UpdateAsync(int listaId, int produtoId, ProdutoListaPatchDto request);
 
         Task<ResultData<ProdutoListaResponseDto>> DeleteAsync(int produtoId, int listaId);
     }

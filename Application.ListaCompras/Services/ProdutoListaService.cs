@@ -1,5 +1,6 @@
 using Application.ListaCompras.DTOs.ProdutoLista;
 using Application.ListaCompras.Interfaces;
+using Application.ListaCompras.Validation;
 using Application.ListaCompras.Mappings;
 using Domain.ListaCompras.Common.Results;
 using Domain.ListaCompras.Entities;
@@ -28,7 +29,6 @@ namespace Application.ListaCompras.Services
             _statusRepository = statusRepository;
         }
 
-        // busca a lista toda; no usuário dá pra passar o nome pra filtrar
         public async Task<ResultData<IEnumerable<ProdutoListaResponseDto>>> GetAllAsync()
         {
 
@@ -37,7 +37,6 @@ namespace Application.ListaCompras.Services
             return MapCollectionResult(result);
         }
 
-        // aqui faço a operação e trato o retorno antes de passar pra API
         public async Task<ResultData<IEnumerable<ProdutoListaResponseDto>>> GetByListaAsync(int listaId)
         {
 
@@ -51,7 +50,6 @@ namespace Application.ListaCompras.Services
             return MapCollectionResult(result);
         }
 
-        // aqui faço a operação e trato o retorno antes de passar pra API
         public async Task<ResultData<IEnumerable<ProdutoListaResponseDto>>> GetByProdutoAsync(int produtoId)
         {
 
@@ -65,7 +63,6 @@ namespace Application.ListaCompras.Services
             return MapCollectionResult(result);
         }
 
-        // procura um registro pelo id, se não achar volta erro
         public async Task<ResultData<ProdutoListaResponseDto>> GetByIdAsync(int produtoId, int listaId)
         {
 
@@ -110,23 +107,35 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
+        /// <summary>
+        /// Atualiza os dados de um produto já associado a uma lista.
+        /// A chave do vínculo é formada por produto e lista; se o status mudar,
+        /// verifica antes se o novo status existe. A quantidade pode ser alterada
+        /// independentemente do status.
+        /// </summary>
         public async Task<ResultData<ProdutoListaResponseDto>> UpdateAsync(
             int listaId,
             int produtoId,
-            ProdutoListaRequestDto request)
+            ProdutoListaPatchDto request)
         {
+            var erroPatch = PatchValidator.Validate(request);
+            if (erroPatch is not null)
+                return ResultData<ProdutoListaResponseDto>.Error(erroPatch);
 
             var existingResult = await _repository.GetByIdAsync(produtoId, listaId);
 
             if (!existingResult.IsSuccess || existingResult.Data is null)
                 return ResultData<ProdutoListaResponseDto>.Error("Produto não encontrado nesta lista.");
 
-            var statusResult = await _statusRepository.GetByIdAsync(request.StatusId);
+            if (request.StatusId.HasValue)
+            {
+                var statusResult = await _statusRepository.GetByIdAsync(request.StatusId.Value);
 
-            if (!statusResult.IsSuccess || statusResult.Data is null)
-                return ResultData<ProdutoListaResponseDto>.Error("Status não encontrado.");
+                if (!statusResult.IsSuccess || statusResult.Data is null)
+                    return ResultData<ProdutoListaResponseDto>.Error("Status não encontrado.");
 
-            existingResult.Data.Status = statusResult.Data;
+                existingResult.Data.Status = statusResult.Data;
+            }
 
             ProdutoListaMapping.MapToExistingEntity(request, existingResult.Data);
 
@@ -135,7 +144,6 @@ namespace Application.ListaCompras.Services
             return MapResult(updateResult);
         }
 
-        // remove o registro usando o id
         public async Task<ResultData<ProdutoListaResponseDto>> DeleteAsync(int produtoId, int listaId)
         {
 
@@ -159,7 +167,6 @@ namespace Application.ListaCompras.Services
             return ResultData<IEnumerable<ProdutoListaResponseDto>>.Success(response);
         }
 
-        // evita repetir o mesmo código pra transformar o resultado em DTO
         private static ResultData<ProdutoListaResponseDto> MapResult(ResultData<ProdutoLista> result)
         {
 

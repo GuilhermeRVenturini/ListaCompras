@@ -25,7 +25,6 @@ namespace Application.ListaCompras.Services
             _usuarioRepository = usuarioRepository;
         }
 
-        // busca a lista toda; no usuário dá pra passar o nome pra filtrar
         public async Task<ResultData<IEnumerable<UsuarioListaResponseDto>>> GetAllAsync()
         {
 
@@ -34,7 +33,6 @@ namespace Application.ListaCompras.Services
             return MapCollectionResult(result);
         }
 
-        // aqui faço a operação e trato o retorno antes de passar pra API
         public async Task<ResultData<IEnumerable<UsuarioListaResponseDto>>> GetByListaAsync(int listaId)
         {
 
@@ -48,7 +46,6 @@ namespace Application.ListaCompras.Services
             return MapCollectionResult(result);
         }
 
-        // aqui faço a operação e trato o retorno antes de passar pra API
         public async Task<ResultData<IEnumerable<UsuarioListaResponseDto>>> GetByUsuarioAsync(Guid usuarioId)
         {
 
@@ -62,7 +59,6 @@ namespace Application.ListaCompras.Services
             return MapCollectionResult(result);
         }
 
-        // procura um registro pelo id, se não achar volta erro
         public async Task<ResultData<UsuarioListaResponseDto>> GetByIdAsync(int listaId, Guid usuarioId)
         {
 
@@ -71,7 +67,11 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
-        // cria um registro novo e devolve o resultado
+        /// <summary>
+        /// Vincula um usuário a uma lista somente depois de confirmar a existência
+        /// dos dois registros e a ausência do mesmo vínculo. Isso evita cadastrar
+        /// novamente a combinação <c>ListaId</c> + <c>UsuarioId</c>.
+        /// </summary>
         public async Task<ResultData<UsuarioListaResponseDto>> CreateAsync(int listaId, Guid usuarioId)
         {
 
@@ -99,7 +99,6 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
-        // remove o registro usando o id
         public async Task<ResultData<UsuarioListaResponseDto>> DeleteAsync(int listaId, Guid usuarioId)
         {
 
@@ -123,7 +122,6 @@ namespace Application.ListaCompras.Services
             return ResultData<IEnumerable<UsuarioListaResponseDto>>.Success(response);
         }
 
-        // evita repetir o mesmo código pra transformar o resultado em DTO
         private static ResultData<UsuarioListaResponseDto> MapResult(ResultData<UsuarioLista> result)
         {
 

@@ -11,14 +11,11 @@ namespace Infrastructure.ListaCompras.Repositories
         : RepositoryBase<UsuarioLista>, IUsuarioListaRepository
     {
 
-        // método que conversa com o DbContext pra fazer a operação no banco
         public UsuarioListaRepository(ListaCompras_DbContext context)
             : base(context)
         {
         }
 
-
-        // busca a lista toda; no usuário dá pra passar o nome pra filtrar
         public async Task<ResultData<IEnumerable<UsuarioLista>>> GetAllAsync()
         {
             try
@@ -37,7 +34,6 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
-
         public async Task<ResultData<IEnumerable<UsuarioLista>>> GetByListaIdAsync(
             int listaId)
         {
@@ -45,7 +41,6 @@ namespace Infrastructure.ListaCompras.Repositories
             {
                 var entities = await QueryWithRelationships()
                     .AsNoTracking()
-
 
                     .Where(x => x.ListaId == listaId)
                     .ToListAsync();
@@ -60,7 +55,6 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
-
         public async Task<ResultData<IEnumerable<UsuarioLista>>> GetByUsuarioIdAsync(
             Guid usuarioId)
         {
@@ -68,7 +62,6 @@ namespace Infrastructure.ListaCompras.Repositories
             {
                 var entities = await QueryWithRelationships()
                     .AsNoTracking()
-
 
                     .Where(x => x.UsuarioId == usuarioId)
                     .ToListAsync();
@@ -82,7 +75,6 @@ namespace Infrastructure.ListaCompras.Repositories
                     .Error("Erro ao buscar as listas do usuário.");
             }
         }
-
 
         public async Task<ResultData<UsuarioLista>> GetByIdAsync(
             int listaId,
@@ -109,7 +101,6 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
-
         public async Task<ResultData<UsuarioLista>> CreateAsync(
             UsuarioLista entity)
         {
@@ -129,7 +120,6 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
-
         public async Task<ResultData<UsuarioLista>> DeleteAsync(
             int listaId,
             Guid usuarioId)
@@ -141,7 +131,6 @@ namespace Infrastructure.ListaCompras.Repositories
 
                 if (!result.IsSuccess || result.Data is null)
                     return result;
-
 
                 _dbSet.Remove(result.Data);
 
@@ -157,8 +146,6 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
-
-        // método que conversa com o DbContext pra fazer a operação no banco
         private IQueryable<UsuarioLista> QueryWithRelationships()
         {
             return _dbSet

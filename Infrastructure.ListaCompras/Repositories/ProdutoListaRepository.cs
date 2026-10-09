@@ -4,11 +4,6 @@ using Domain.ListaCompras.Interfaces;
 using Infrastructure.ListaCompras.Data;
 using Microsoft.EntityFrameworkCore;
 
-// esses aqui sao diferentes do repository normal
-// pq n da pra achar o registro usando só um id
-// tipo no ProdutoLista precisamos do id do produto e da lista
-// os dois juntos mostram exatamente qual ligação queremos
-// ai usamos isso pra buscar, editar ou excluir
 namespace Infrastructure.ListaCompras.Repositories
 {
 
@@ -16,20 +11,16 @@ namespace Infrastructure.ListaCompras.Repositories
         : RepositoryBase<ProdutoLista>, IProdutoListaRepository
     {
 
-        // método que conversa com o DbContext pra fazer a operação no banco
         public ProdutoListaRepository(ListaCompras_DbContext context)
             : base(context)
         {
         }
 
-
-        // busca a lista toda; no usuário dá pra passar o nome pra filtrar
         public async Task<ResultData<IEnumerable<ProdutoLista>>> GetAllAsync()
         {
             try
             {
                 var entities = await QueryWithRelationships()
-
 
                     .AsNoTracking()
                     .ToListAsync();
@@ -44,7 +35,6 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
-
         public async Task<ResultData<IEnumerable<ProdutoLista>>> GetByListaIdAsync(
             int listaId)
         {
@@ -52,7 +42,6 @@ namespace Infrastructure.ListaCompras.Repositories
             {
                 var entities = await QueryWithRelationships()
                     .AsNoTracking()
-
 
                     .Where(x => x.ListaId == listaId)
                     .ToListAsync();
@@ -67,7 +56,6 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
-
         public async Task<ResultData<IEnumerable<ProdutoLista>>> GetByProdutoIdAsync(
             int produtoId)
         {
@@ -75,7 +63,6 @@ namespace Infrastructure.ListaCompras.Repositories
             {
                 var entities = await QueryWithRelationships()
                     .AsNoTracking()
-
 
                     .Where(x => x.ProdutoId == produtoId)
                     .ToListAsync();
@@ -89,7 +76,6 @@ namespace Infrastructure.ListaCompras.Repositories
                     .Error("Erro ao buscar as listas do produto.");
             }
         }
-
 
         public async Task<ResultData<ProdutoLista>> GetByIdAsync(
             int produtoId,
@@ -116,14 +102,12 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
-
         public async Task<ResultData<ProdutoLista>> CreateAsync(
             ProdutoLista entity)
         {
             try
             {
                 await _dbSet.AddAsync(entity);
-
 
                 await _context.SaveChangesAsync();
 
@@ -137,13 +121,13 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
-
         public async Task<ResultData<ProdutoLista>> UpdateAsync(
             ProdutoLista entity)
         {
             try
             {
-                _dbSet.Update(entity);
+                if (_context.Entry(entity).State == EntityState.Detached)
+                    _dbSet.Update(entity);
 
                 await _context.SaveChangesAsync();
 
@@ -156,7 +140,6 @@ namespace Infrastructure.ListaCompras.Repositories
                     .Error("Erro ao atualizar o produto da lista.");
             }
         }
-
 
         public async Task<ResultData<ProdutoLista>> DeleteAsync(
             int produtoId,
@@ -184,18 +167,13 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
-
-        // método que conversa com o DbContext pra fazer a operação no banco
         private IQueryable<ProdutoLista> QueryWithRelationships()
         {
             return _dbSet
 
-
                 .Include(x => x.Produto)
 
-
                 .Include(x => x.Lista)
-
 
                 .Include(x => x.Status);
         }

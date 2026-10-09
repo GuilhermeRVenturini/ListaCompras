@@ -2,7 +2,6 @@ using Application.ListaCompras.DTOs.Usuario;
 using Application.ListaCompras.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-// controller de Usuario: recebe a requisição e manda pro service resolver
 namespace API.ListaCompras.Controllers;
 
 [ApiController]
@@ -20,11 +19,14 @@ public sealed class UsuarioController : ControllerBase
         _usuarioListaService = usuarioListaService;
     }
 
+    /// <summary>
+    /// Lista usuários com filtros opcionais na URL: <c>?nome=Ana&amp;cpf=123</c>.
+    /// Aceita um dos critérios, ambos ao mesmo tempo ou nenhum para listar todos.
+    /// </summary>
     [HttpGet]
-    // busca a lista toda; no usuário dá pra passar o nome pra filtrar
-    public async Task<IActionResult> GetAllAsync([FromQuery] string? nome)
+    public async Task<IActionResult> GetAllAsync([FromQuery] UsuarioFiltroDto filtro)
     {
-        var result = await _usuarioService.GetAllAsync(nome);
+        var result = await _usuarioService.GetAllAsync(filtro);
 
         if (!result.IsSuccess || result.Data is null)
             return BadRequest(new { result.Message });
@@ -33,7 +35,6 @@ public sealed class UsuarioController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    // procura um registro pelo id, se não achar volta erro
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var result = await _usuarioService.GetByIdAsync(id);
@@ -50,7 +51,7 @@ public sealed class UsuarioController : ControllerBase
     }
 
     [HttpPost]
-    // cria um registro novo e devolve o resultado
+
     public async Task<IActionResult> CreateAsync([FromBody] UsuarioRequestDto request)
     {
         var result = await _usuarioService.CreateAsync(request);
@@ -62,8 +63,7 @@ public sealed class UsuarioController : ControllerBase
     }
 
     [HttpPatch("{id:guid}")]
-    // acha o registro e atualiza os dados dele
-    public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UsuarioRequestDto request)
+    public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UsuarioPatchDto request)
     {
         var result = await _usuarioService.UpdateAsync(id, request);
 
@@ -79,7 +79,6 @@ public sealed class UsuarioController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    // remove o registro usando o id
     public async Task<IActionResult> DeleteAsync(Guid id)
     {
         var result = await _usuarioService.DeleteAsync(id);
@@ -96,7 +95,6 @@ public sealed class UsuarioController : ControllerBase
     }
 
     [HttpGet("{usuarioId:guid}/listas")]
-    // endpoint: recebe os parâmetros, chama o service e devolve a resposta HTTP
     public async Task<IActionResult> GetListasAsync(Guid usuarioId)
     {
         var result = await _usuarioListaService.GetByUsuarioAsync(usuarioId);

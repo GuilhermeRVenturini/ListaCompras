@@ -3,7 +3,6 @@ using Application.ListaCompras.DTOs.ProdutoLista;
 using Application.ListaCompras.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-// controller de Lista: recebe a requisição e manda pro service resolver
 namespace API.ListaCompras.Controllers;
 
 [ApiController]
@@ -25,7 +24,7 @@ public sealed class ListaController : ControllerBase
     }
 
     [HttpGet]
-    // busca a lista toda; no usuário dá pra passar o nome pra filtrar
+
     public async Task<IActionResult> GetAllAsync()
     {
         var result = await _listaService.GetAllAsync();
@@ -45,7 +44,6 @@ public sealed class ListaController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    // procura um registro pelo id, se não achar volta erro
     public async Task<IActionResult> GetByIdAsync(int id)
     {
         var result = await _listaService.GetByIdAsync(id);
@@ -65,7 +63,7 @@ public sealed class ListaController : ControllerBase
     }
 
     [HttpPost]
-    // cria um registro novo e devolve o resultado
+
     public async Task<IActionResult> CreateAsync([FromBody] ListaRequestDto request)
     {
         var result = await _listaService.CreateAsync(request);
@@ -85,8 +83,7 @@ public sealed class ListaController : ControllerBase
     }
 
     [HttpPatch("{id:int}")]
-    // acha o registro e atualiza os dados dele
-    public async Task<IActionResult> UpdateAsync(int id, [FromBody] ListaRequestDto request)
+    public async Task<IActionResult> UpdateAsync(int id, [FromBody] ListaPatchDto request)
     {
         var result = await _listaService.UpdateAsync(id, request);
 
@@ -105,7 +102,6 @@ public sealed class ListaController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    // remove o registro usando o id
     public async Task<IActionResult> DeleteAsync(int id)
     {
         var result = await _listaService.DeleteAsync(id);
@@ -125,7 +121,6 @@ public sealed class ListaController : ControllerBase
     }
 
     [HttpGet("{listaId:int}/produtos")]
-    // endpoint: recebe os parâmetros, chama o service e devolve a resposta HTTP
     public async Task<IActionResult> GetProdutosAsync(int listaId)
     {
         var result = await _produtoListaService.GetByListaAsync(listaId);
@@ -145,7 +140,6 @@ public sealed class ListaController : ControllerBase
     }
 
     [HttpGet("{listaId:int}/produtos/{produtoId:int}")]
-    // endpoint: recebe os parâmetros, chama o service e devolve a resposta HTTP
     public async Task<IActionResult> GetProdutoAsync(int listaId, int produtoId)
     {
         var result = await _produtoListaService.GetByIdAsync(produtoId, listaId);
@@ -186,11 +180,16 @@ public sealed class ListaController : ControllerBase
         return Ok(result.Data);
     }
 
+    /// <summary>
+    /// Altera o status e/ou a quantidade do produto identificado na lista pela URL.
+    /// Não adiciona outro produto: o vínculo já deve existir, e um novo status
+    /// precisa corresponder a um registro cadastrado.
+    /// </summary>
     [HttpPatch("{listaId:int}/produtos/{produtoId:int}")]
     public async Task<IActionResult> UpdateProdutoAsync(
         int listaId,
         int produtoId,
-        [FromBody] ProdutoListaRequestDto request)
+        [FromBody] ProdutoListaPatchDto request)
     {
         var result = await _produtoListaService.UpdateAsync(listaId, produtoId, request);
 
@@ -209,7 +208,6 @@ public sealed class ListaController : ControllerBase
     }
 
     [HttpDelete("{listaId:int}/produtos/{produtoId:int}")]
-    // endpoint: recebe os parâmetros, chama o service e devolve a resposta HTTP
     public async Task<IActionResult> RemoveProdutoAsync(int listaId, int produtoId)
     {
         var result = await _produtoListaService.DeleteAsync(produtoId, listaId);
@@ -229,7 +227,6 @@ public sealed class ListaController : ControllerBase
     }
 
     [HttpGet("{listaId:int}/usuarios")]
-    // endpoint: recebe os parâmetros, chama o service e devolve a resposta HTTP
     public async Task<IActionResult> GetUsuariosAsync(int listaId)
     {
         var result = await _usuarioListaService.GetByListaAsync(listaId);
@@ -249,7 +246,6 @@ public sealed class ListaController : ControllerBase
     }
 
     [HttpGet("{listaId:int}/usuarios/{usuarioId:guid}")]
-    // endpoint: recebe os parâmetros, chama o service e devolve a resposta HTTP
     public async Task<IActionResult> GetUsuarioAsync(int listaId, Guid usuarioId)
     {
         var result = await _usuarioListaService.GetByIdAsync(listaId, usuarioId);
@@ -269,7 +265,6 @@ public sealed class ListaController : ControllerBase
     }
 
     [HttpPost("{listaId:int}/usuarios/{usuarioId:guid}")]
-    // endpoint: recebe os parâmetros, chama o service e devolve a resposta HTTP
     public async Task<IActionResult> AddUsuarioAsync(int listaId, Guid usuarioId)
     {
         var result = await _usuarioListaService.CreateAsync(listaId, usuarioId);
@@ -289,7 +284,6 @@ public sealed class ListaController : ControllerBase
     }
 
     [HttpDelete("{listaId:int}/usuarios/{usuarioId:guid}")]
-    // endpoint: recebe os parâmetros, chama o service e devolve a resposta HTTP
     public async Task<IActionResult> RemoveUsuarioAsync(int listaId, Guid usuarioId)
     {
         var result = await _usuarioListaService.DeleteAsync(listaId, usuarioId);

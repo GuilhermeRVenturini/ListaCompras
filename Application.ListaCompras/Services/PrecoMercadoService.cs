@@ -1,5 +1,6 @@
 using Application.ListaCompras.DTOs.PrecoMercado;
 using Application.ListaCompras.Interfaces;
+using Application.ListaCompras.Validation;
 using Application.ListaCompras.Mappings;
 using Domain.ListaCompras.Common.Results;
 using Domain.ListaCompras.Entities;
@@ -7,7 +8,6 @@ using Domain.ListaCompras.Interfaces;
 
 namespace Application.ListaCompras.Services
 {
-
     public sealed class PrecoMercadoService : IPrecoMercadoService
     {
 
@@ -28,7 +28,6 @@ namespace Application.ListaCompras.Services
             _precoRepository = precoRepository;
         }
 
-        // busca a lista toda; no usuário dá pra passar o nome pra filtrar
         public async Task<ResultData<IEnumerable<PrecoMercadoResponseDto>>> GetAllAsync()
         {
 
@@ -37,7 +36,6 @@ namespace Application.ListaCompras.Services
             return MapCollectionResult(result);
         }
 
-        // aqui faço a operação e trato o retorno antes de passar pra API
         public async Task<ResultData<IEnumerable<PrecoMercadoResponseDto>>> GetByProdutoAsync(int produtoId)
         {
 
@@ -51,7 +49,6 @@ namespace Application.ListaCompras.Services
             return MapCollectionResult(result);
         }
 
-        // aqui faço a operação e trato o retorno antes de passar pra API
         public async Task<ResultData<IEnumerable<PrecoMercadoResponseDto>>> GetByMercadoAsync(int mercadoId)
         {
 
@@ -65,7 +62,6 @@ namespace Application.ListaCompras.Services
             return MapCollectionResult(result);
         }
 
-        // procura um registro pelo id, se não achar volta erro
         public async Task<ResultData<PrecoMercadoResponseDto>> GetByIdAsync(int produtoId, int mercadoId)
         {
 
@@ -110,31 +106,45 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
+        /// <summary>
+        /// Altera o preço vinculado a um produto em um mercado específico.
+        /// <list type="number">
+        /// <item>Valida o PATCH e localiza o vínculo pela chave <c>ProdutoId</c> + <c>MercadoId</c>.</item>
+        /// <item>Confirma que o novo <c>PrecoId</c> existe antes de trocar a referência.</item>
+        /// <item>Persiste o vínculo atualizado, sem criar outro registro de preço.</item>
+        /// </list>
+        /// </summary>
         public async Task<ResultData<PrecoMercadoResponseDto>> UpdateAsync(
             int produtoId,
             int mercadoId,
-            PrecoMercadoRequestDto request)
+            PrecoMercadoPatchDto request)
         {
+            var erroPatch = PatchValidator.Validate(request);
+            if (erroPatch is not null)
+                return ResultData<PrecoMercadoResponseDto>.Error(erroPatch);
 
             var existingResult = await _repository.GetByIdAsync(produtoId, mercadoId);
 
             if (!existingResult.IsSuccess || existingResult.Data is null)
                 return ResultData<PrecoMercadoResponseDto>.Error("Preço do produto neste mercado não encontrado.");
 
-            var precoResult = await _precoRepository.GetByIdAsync(request.PrecoId);
+            if (request.PrecoId.HasValue)
+            {
+                var precoResult = await _precoRepository.GetByIdAsync(request.PrecoId.Value);
 
-            if (!precoResult.IsSuccess || precoResult.Data is null)
-                return ResultData<PrecoMercadoResponseDto>.Error("Preço não encontrado.");
+                if (!precoResult.IsSuccess || precoResult.Data is null)
+                    return ResultData<PrecoMercadoResponseDto>.Error("Preço não encontrado.");
+
+                existingResult.Data.Preco = precoResult.Data;
+            }
 
             PrecoMercadoMapping.MapToExistingEntity(request, existingResult.Data);
-            existingResult.Data.Preco = precoResult.Data;
 
             var updateResult = await _repository.UpdateAsync(existingResult.Data);
 
             return MapResult(updateResult);
         }
 
-        // remove o registro usando o id
         public async Task<ResultData<PrecoMercadoResponseDto>> DeleteAsync(int produtoId, int mercadoId)
         {
 
@@ -158,7 +168,6 @@ namespace Application.ListaCompras.Services
             return ResultData<IEnumerable<PrecoMercadoResponseDto>>.Success(response);
         }
 
-        // evita repetir o mesmo código pra transformar o resultado em DTO
         private static ResultData<PrecoMercadoResponseDto> MapResult(ResultData<PrecoMercado> result)
         {
 

@@ -1,7 +1,5 @@
-// isso é pra n ficar devolvendo resultado de qualquer jeito
-// aqui a gente guarda se deu certo ou n
-// e tbm pode mandar uma mensagem e os dados
-// ai quem chamou o metodo consegue entender oq aconteceu
+
+
 namespace Domain.ListaCompras.Common.Results
 {
 
@@ -14,14 +12,16 @@ namespace Domain.ListaCompras.Common.Results
             Message = message;
         }
 
-
         public bool IsSuccess { get; private set; }
-
 
         public string Message { get; private set; }
     }
 
-
+    /// <summary>
+    /// Transporta o resultado de uma operação sem exigir exceção para falhas previstas:
+    /// <c>Success</c> guarda o dado retornado; <c>Error</c> marca a falha e guarda
+    /// a mensagem que será interpretada pela camada chamadora.
+    /// </summary>
     public class ResultData<T> : Result
     {
 
@@ -34,13 +34,10 @@ namespace Domain.ListaCompras.Common.Results
             Data = data;
         }
 
-
         public T? Data { get; set; }
-
 
         public static ResultData<T> Success(T? data)
             => new(data);
-
 
         public static ResultData<T> Error(string message)
             => new(default, false, message);

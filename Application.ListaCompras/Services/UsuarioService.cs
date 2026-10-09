@@ -1,15 +1,12 @@
 using Application.ListaCompras.DTOs.Usuario;
 using Application.ListaCompras.Interfaces;
+using Application.ListaCompras.Validation;
+using Application.ListaCompras.Filters;
 using Application.ListaCompras.Mappings;
 using Domain.ListaCompras.Common.Results;
 using Domain.ListaCompras.Entities;
 using Domain.ListaCompras.Interfaces;
 
-// usamos async e await pq algumas coisas demoram
-// tipo buscar ou salvar algo no banco
-// ai enquanto esperamos a operação terminar
-// n precisamos ficar travando a thread atoa
-// quando termina o codigo continua normalmente
 namespace Application.ListaCompras.Services
 {
 
@@ -18,40 +15,25 @@ namespace Application.ListaCompras.Services
 
         private readonly IRepository<Usuario, Guid> _repository;
 
-        // aqui faço a operação e trato o retorno antes de passar pra API
         public UsuarioService(IRepository<Usuario, Guid> repository)
         {
             _repository = repository;
         }
 
-        // busca a lista toda; no usuário dá pra passar o nome pra filtrar
-        public async Task<ResultData<IEnumerable<UsuarioResponseDto>>> GetAllAsync(string? nome = null)
+        public async Task<ResultData<IEnumerable<UsuarioResponseDto>>> GetAllAsync(UsuarioFiltroDto filtro)
         {
+            var expressao = new UsuarioFilter { Nome = filtro?.Nome, Cpf = filtro?.Cpf }
+                .ToExpression();
 
-            // primeiro pego todos e depois aplico o filtro, então por enquanto o banco ainda manda tudo
-            var result = await _repository.GetAllAsync();
+            var result = await _repository.GetAllAsync(expressao);
 
             if (!result.IsSuccess || result.Data is null)
                 return ResultData<IEnumerable<UsuarioResponseDto>>.Error(result.Message);
 
-            var usuarios = result.Data;
-
-            // só filtra se digitar um nome. "bru" já serve pra achar "Bruno"
-            if (!string.IsNullOrWhiteSpace(nome))
-            {
-                // ignora maiúscula/minúscula e tira espaços sobrando da busca
-                usuarios = usuarios.Where(u =>
-                    u.Nome.Contains(nome.Trim(), StringComparison.OrdinalIgnoreCase));
-            }
-
-            var response = usuarios
-                .Select(UsuarioMapping.ToResponseDto)
-                .ToList();
-
+            var response = result.Data.Select(UsuarioMapping.ToResponseDto).ToList();
             return ResultData<IEnumerable<UsuarioResponseDto>>.Success(response);
         }
 
-        // procura um registro pelo id, se não achar volta erro
         public async Task<ResultData<UsuarioResponseDto>> GetByIdAsync(Guid id)
         {
 
@@ -60,7 +42,6 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
-        // cria um registro novo e devolve o resultado
         public async Task<ResultData<UsuarioResponseDto>> CreateAsync(UsuarioRequestDto request)
         {
 
@@ -71,9 +52,11 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
-        // acha o registro e atualiza os dados dele
-        public async Task<ResultData<UsuarioResponseDto>> UpdateAsync(Guid id, UsuarioRequestDto request)
+        public async Task<ResultData<UsuarioResponseDto>> UpdateAsync(Guid id, UsuarioPatchDto request)
         {
+            var erroPatch = PatchValidator.Validate(request);
+            if (erroPatch is not null)
+                return ResultData<UsuarioResponseDto>.Error(erroPatch);
 
             var existingResult = await _repository.GetByIdAsync(id);
 
@@ -87,7 +70,6 @@ namespace Application.ListaCompras.Services
             return MapResult(updateResult);
         }
 
-        // remove o registro usando o id
         public async Task<ResultData<UsuarioResponseDto>> DeleteAsync(Guid id)
         {
 
@@ -96,7 +78,6 @@ namespace Application.ListaCompras.Services
             return MapResult(result);
         }
 
-        // evita repetir o mesmo código pra transformar o resultado em DTO
         private static ResultData<UsuarioResponseDto> MapResult(ResultData<Usuario> result)
         {
 

@@ -2,7 +2,6 @@ using Domain.ListaCompras.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-// DbContext: aqui que configuro as tabelas e relações que o EF Core vai usar no banco
 namespace Infrastructure.ListaCompras.Data
 {
 
@@ -15,7 +14,6 @@ namespace Infrastructure.ListaCompras.Data
         {
         }
 
-
         public DbSet<Lista> Lista { get; set; }
         public DbSet<Historico> Historico { get; set; }
         public DbSet<Mercado> Mercado { get; set; }
@@ -24,19 +22,20 @@ namespace Infrastructure.ListaCompras.Data
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<Status> Status { get; set; }
 
-
         public DbSet<PrecoMercado> PrecoMercado { get; set; }
         public DbSet<UsuarioLista> UsuarioLista { get; set; }
         public DbSet<ProdutoLista> ProdutoLista { get; set; }
 
-
-        // configuro as relações/chaves das tabelas aqui
+        /// <summary>
+        /// Define os relacionamentos que não ficam evidentes apenas pelas entidades:
+        /// chaves compostas dos vínculos produto/lista, usuário/lista e preço/mercado;
+        /// referências do histórico com exclusão configurada como <c>SetNull</c>;
+        /// e os status iniciais cadastrados por seed.
+        /// </summary>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
             base.OnModelCreating(modelBuilder);
-
-
 
             modelBuilder.Entity<ProdutoLista>(entity =>
             {
@@ -47,23 +46,18 @@ namespace Infrastructure.ListaCompras.Data
                     x.ListaId
                 });
 
-
                 entity.HasOne(x => x.Produto)
                     .WithMany(x => x.ProdutoListas)
                     .HasForeignKey(x => x.ProdutoId);
-
 
                 entity.HasOne(x => x.Lista)
                     .WithMany(x => x.ProdutoListas)
                     .HasForeignKey(x => x.ListaId);
 
-
                 entity.HasOne(x => x.Status)
                     .WithMany(x => x.ProdutoListas)
                     .HasForeignKey(x => x.StatusId);
             });
-
-
 
             modelBuilder.Entity<UsuarioLista>(entity =>
             {
@@ -74,18 +68,14 @@ namespace Infrastructure.ListaCompras.Data
                     x.UsuarioId
                 });
 
-
                 entity.HasOne(x => x.Lista)
                     .WithMany(x => x.UsuarioListas)
                     .HasForeignKey(x => x.ListaId);
-
 
                 entity.HasOne(x => x.Usuario)
                     .WithMany(x => x.UsuarioListas)
                     .HasForeignKey(x => x.UsuarioId);
             });
-
-
 
             modelBuilder.Entity<PrecoMercado>(entity =>
             {
@@ -96,23 +86,18 @@ namespace Infrastructure.ListaCompras.Data
                     x.MercadoId
                 });
 
-
                 entity.HasOne(x => x.Produto)
                     .WithMany(x => x.PrecoMercados)
                     .HasForeignKey(x => x.ProdutoId);
-
 
                 entity.HasOne(x => x.Mercado)
                     .WithMany(x => x.PrecoMercados)
                     .HasForeignKey(x => x.MercadoId);
 
-
                 entity.HasOne(x => x.Preco)
                     .WithMany(x => x.PrecoMercados)
                     .HasForeignKey(x => x.PrecoId);
             });
-
-
 
             modelBuilder.Entity<Historico>(entity =>
             {
@@ -121,41 +106,33 @@ namespace Infrastructure.ListaCompras.Data
                     .WithMany(x => x.Historicos)
                     .HasForeignKey(x => x.ProdutoId)
 
-
                     .OnDelete(DeleteBehavior.SetNull);
-
 
                 entity.HasOne(x => x.Mercado)
                     .WithMany(x => x.Historicos)
                     .HasForeignKey(x => x.MercadoId)
                     .OnDelete(DeleteBehavior.SetNull);
 
-
                 entity.HasOne(x => x.Preco)
                     .WithMany(x => x.Historicos)
                     .HasForeignKey(x => x.PrecoId)
                     .OnDelete(DeleteBehavior.SetNull);
-
 
                 entity.HasOne(x => x.Lista)
                     .WithMany()
                     .HasForeignKey(x => x.ListaId)
                     .OnDelete(DeleteBehavior.SetNull);
 
-
                 entity.HasOne(x => x.Usuario)
                     .WithMany()
                     .HasForeignKey(x => x.UsuarioId)
                     .OnDelete(DeleteBehavior.SetNull);
-
 
                 entity.HasOne(x => x.Status)
                     .WithMany()
                     .HasForeignKey(x => x.StatusId)
                     .OnDelete(DeleteBehavior.SetNull);
             });
-
-
 
             modelBuilder.Entity<Status>().HasData(
                 new Status
@@ -176,15 +153,12 @@ namespace Infrastructure.ListaCompras.Data
             );
         }
 
-
         public override int SaveChanges()
         {
             GerarHistorico();
 
-
             return base.SaveChanges();
         }
-
 
         public override Task<int> SaveChangesAsync(
             CancellationToken cancellationToken = default)
@@ -194,31 +168,31 @@ namespace Infrastructure.ListaCompras.Data
             return base.SaveChangesAsync(cancellationToken);
         }
 
-
-        // aqui o ef vê oq foi mudado antes de salvar
-        // tipo se criou, editou ou apagou alguma coisa
-        // ai a gente usa essas mudanças pra montar o historico
-        // e salva os registros junto com as alterações
-        // basicamente é pra saber oq rolou no banco
+        /// <summary>
+        /// Prepara os registros de histórico das alterações rastreadas pelo EF Core.
+        /// <list type="number">
+        /// <item>Identifica entidades criadas, alteradas ou removidas, sem incluir o próprio <c>Historico</c>.</item>
+        /// <item>Obtém o nome da entidade e os valores de sua chave primária; em exclusões, usa os valores originais.</item>
+        /// <item>Adiciona um evento com operação, identificação e horário em UTC para cada entrada encontrada.</item>
+        /// </list>
+        /// Os eventos são incluídos antes de <c>SaveChanges</c> e persistidos junto
+        /// com as demais mudanças, sem gerar histórico dos próprios eventos.
+        /// </summary>
         private void GerarHistorico()
         {
 
             ChangeTracker.DetectChanges();
 
-
             var alteracoes = ChangeTracker.Entries()
                 .Where(entry =>
 
-
                     entry.Entity
                         is not Domain.ListaCompras.Entities.Historico &&
-
 
                     (entry.State == EntityState.Added ||
                      entry.State == EntityState.Modified ||
                      entry.State == EntityState.Deleted))
                 .ToList();
-
 
             foreach (var entry in alteracoes)
             {
@@ -237,13 +211,10 @@ namespace Infrastructure.ListaCompras.Data
                     operacao = "REMOVIDO";
                 }
 
-                // pega o nome da entidade que foi alterada
                 string entidade = entry.Metadata.ClrType.Name;
 
-                // pega as chaves primarias, pode ser uma ou mais
                 var chaves = entry.Metadata.FindPrimaryKey()?.Properties;
 
-                // aqui montamos o registro com os ids pra saber exatamente oq mudou
                 string registro = entidade;
 
                 if (chaves != null)
@@ -252,8 +223,6 @@ namespace Infrastructure.ListaCompras.Data
                     {
                         var propriedade = entry.Property(chave.Name);
 
-                        // se removeu, pega o valor antigo
-                        // se criou ou atualizou, pega o valor atual
                         var valor = entry.State == EntityState.Deleted
                             ? propriedade.OriginalValue
                             : propriedade.CurrentValue;

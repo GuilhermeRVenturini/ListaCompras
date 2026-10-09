@@ -1,14 +1,12 @@
 using Application.ListaCompras.DTOs.PrecoMercado;
 using Domain.ListaCompras.Entities;
 
-// aqui faço a conversão de PrecoMercado entre entidade e DTO
 namespace Application.ListaCompras.Mappings
 {
 
     internal static class PrecoMercadoMapping
     {
 
-        // pega o DTO e monta uma entidade pra usar internamente
         public static PrecoMercado ToEntity(int produtoId, int mercadoId, PrecoMercadoRequestDto request)
         {
             return new PrecoMercado
@@ -19,13 +17,12 @@ namespace Application.ListaCompras.Mappings
             };
         }
 
-        // troca os dados na entidade que já existe, sem criar outra
-        public static void MapToExistingEntity(PrecoMercadoRequestDto request, PrecoMercado entity)
+        public static void MapToExistingEntity(PrecoMercadoPatchDto request, PrecoMercado entity)
         {
-            entity.PrecoId = request.PrecoId;
+            if (request.PrecoId is not null)
+                entity.PrecoId = request.PrecoId.Value;
         }
 
-        // monta o DTO que vai voltar na resposta
         public static PrecoMercadoResponseDto ToResponseDto(PrecoMercado entity)
         {
             return new PrecoMercadoResponseDto

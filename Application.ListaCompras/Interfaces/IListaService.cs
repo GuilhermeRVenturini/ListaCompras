@@ -13,7 +13,7 @@ namespace Application.ListaCompras.Interfaces
 
         Task<ResultData<ListaResponseDto>> CreateAsync(ListaRequestDto request);
 
-        Task<ResultData<ListaResponseDto>> UpdateAsync(int id, ListaRequestDto request);
+        Task<ResultData<ListaResponseDto>> UpdateAsync(int id, ListaPatchDto request);
 
         Task<ResultData<ListaResponseDto>> DeleteAsync(int id);
     }

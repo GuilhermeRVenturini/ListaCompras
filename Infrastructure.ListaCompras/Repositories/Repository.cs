@@ -2,13 +2,8 @@ using Domain.ListaCompras.Common.Results;
 using Infrastructure.ListaCompras.Data;
 using Domain.ListaCompras.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
-// resumindo o caminho:
-// o controller recebe oq a pessoa pediu
-// manda pro service que confere as regras
-// o service chama o repository pra mexer no banco
-// ai o resultado volta pro service e dps pro controller
-// que finalmente responde pra quem fez a requisição
 namespace Infrastructure.ListaCompras.Repositories
 {
 
@@ -17,23 +12,27 @@ namespace Infrastructure.ListaCompras.Repositories
         where T : class
     {
 
-        // método que conversa com o DbContext pra fazer a operação no banco
         public Repository(ListaCompras_DbContext context)
             : base(context)
         {
         }
 
-
-        // busca a lista toda; no usuário dá pra passar o nome pra filtrar
-        public async Task<ResultData<IEnumerable<T>>> GetAllAsync()
+        /// <summary>
+        /// Monta uma consulta de leitura sem rastreamento e, se informado, aplica
+        /// o predicado antes do <c>ToListAsync</c>. Assim, a filtragem ocorre
+        /// na consulta ao banco, não após carregar todos os registros.
+        /// </summary>
+        public async Task<ResultData<IEnumerable<T>>> GetAllAsync(Expression<Func<T, bool>>? filtro = null)
         {
             try
             {
 
-                var entities = await _dbSet
-                    .AsNoTracking()
-                    .ToListAsync();
+                IQueryable<T> query = _dbSet.AsNoTracking();
 
+                if (filtro is not null)
+                    query = query.Where(filtro);
+
+                var entities = await query.ToListAsync();
 
                 return ResultData<IEnumerable<T>>
                     .Success(entities);
@@ -46,8 +45,6 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
-
-        // procura um registro pelo id, se não achar volta erro
         public async Task<ResultData<T>> GetByIdAsync(TId id)
         {
             try
@@ -55,11 +52,9 @@ namespace Infrastructure.ListaCompras.Repositories
 
                 var entity = await _dbSet.FindAsync(id);
 
-
                 if (entity is null)
                     return ResultData<T>
                         .Error("Registro não encontrado.");
-
 
                 return ResultData<T>
                     .Success(entity);
@@ -71,15 +66,12 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
-
-        // cria um registro novo e devolve o resultado
         public async Task<ResultData<T>> CreateAsync(T entity)
         {
             try
             {
 
                 await _dbSet.AddAsync(entity);
-
 
                 await _context.SaveChangesAsync();
 
@@ -94,15 +86,18 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
-
-        // acha o registro e atualiza os dados dele
+        /// <summary>
+        /// Persiste uma entidade usando o rastreamento do Entity Framework.
+        /// Quando a entidade já está rastreada, salva as alterações detectadas;
+        /// quando está desanexada, chama <c>Update</c> para marcar sua atualização.
+        /// </summary>
         public async Task<ResultData<T>> UpdateAsync(T entity)
         {
             try
             {
 
-                _dbSet.Update(entity);
-
+                if (_context.Entry(entity).State == EntityState.Detached)
+                    _dbSet.Update(entity);
 
                 await _context.SaveChangesAsync();
 
@@ -116,8 +111,6 @@ namespace Infrastructure.ListaCompras.Repositories
             }
         }
 
-
-        // remove o registro usando o id
         public async Task<ResultData<T>> DeleteAsync(TId id)
         {
             try
@@ -125,13 +118,10 @@ namespace Infrastructure.ListaCompras.Repositories
 
                 var result = await GetByIdAsync(id);
 
-
                 if (!result.IsSuccess || result.Data is null)
                     return result;
 
-
                 _dbSet.Remove(result.Data);
-
 
                 await _context.SaveChangesAsync();
 
