@@ -1,10 +1,12 @@
-﻿using Application.ListaCompras.DTOs.Mercado;
+using Application.ListaCompras.DTOs.Mercado;
 using Domain.ListaCompras.Entities;
 
 namespace Application.ListaCompras.Mappings
 {
+
     internal static class MercadoMapping
     {
+
         public static Mercado ToEntity(MercadoRequestDto request)
         {
             return new Mercado
@@ -15,11 +17,14 @@ namespace Application.ListaCompras.Mappings
             };
         }
 
-        public static void MapToEntity(MercadoRequestDto request, Mercado entity)
+        public static void MapToExistingEntity(MercadoPatchDto request, Mercado entity)
         {
-            entity.Nome = request.Nome;
-            entity.HorarioFuncionamento = request.HorarioFuncionamento;
-            entity.Endereco = request.Endereco;
+            if (request.Nome is not null)
+                entity.Nome = request.Nome;
+            if (request.HorarioFuncionamento is not null)
+                entity.HorarioFuncionamento = request.HorarioFuncionamento;
+            if (request.Endereco is not null)
+                entity.Endereco = request.Endereco;
         }
 
         public static MercadoResponseDto ToResponseDto(Mercado entity)

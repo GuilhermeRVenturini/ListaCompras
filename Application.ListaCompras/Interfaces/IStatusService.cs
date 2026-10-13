@@ -1,10 +1,12 @@
-﻿using Application.ListaCompras.DTOs.Status;
+using Application.ListaCompras.DTOs.Status;
 using Domain.ListaCompras.Common.Results;
 
 namespace Application.ListaCompras.Interfaces
 {
+
     public interface IStatusService
     {
+
         Task<ResultData<IEnumerable<StatusResponseDto>>> GetAllAsync();
 
         Task<ResultData<StatusResponseDto>> GetByIdAsync(int id);

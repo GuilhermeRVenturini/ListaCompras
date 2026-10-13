@@ -16,6 +16,7 @@ public sealed class ProdutoListaController : ControllerBase
     }
 
     [HttpGet]
+
     public async Task<IActionResult> GetAllAsync()
     {
         var result = await _service.GetAllAsync();
@@ -43,6 +44,7 @@ public sealed class ProdutoListaController : ControllerBase
     }
 
     [HttpPost]
+
     public async Task<IActionResult> CreateAsync([FromBody] ProdutoListaRequestDto request)
     {
         var result = await _service.CreateAsync(request);
@@ -53,10 +55,10 @@ public sealed class ProdutoListaController : ControllerBase
         return Ok(result.Data);
     }
 
-    [HttpPut("{produtoId:int}/{listaId:int}")]
-    public async Task<IActionResult> UpdateAsync(int produtoId, int listaId, [FromBody] ProdutoListaRequestDto request)
+    [HttpPatch("{produtoId:int}/{listaId:int}")]
+    public async Task<IActionResult> UpdateAsync(int produtoId, int listaId, [FromBody] ProdutoListaPatchDto request)
     {
-        var result = await _service.UpdateAsync(produtoId, listaId, request);
+        var result = await _service.UpdateAsync(listaId, produtoId, request);
 
         if (!result.IsSuccess || result.Data is null)
         {

@@ -19,21 +19,17 @@ public sealed class UsuarioController : ControllerBase
         _usuarioListaService = usuarioListaService;
     }
 
+    /// <summary>
+    /// Lista usuários com filtros opcionais na URL: <c>?nome=Ana&amp;cpf=123</c>.
+    /// Aceita um dos critérios, ambos ao mesmo tempo ou nenhum para listar todos.
+    /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<IActionResult> GetAllAsync([FromQuery] UsuarioFiltroDto filtro)
     {
-        var result = await _usuarioService.GetAllAsync();
+        var result = await _usuarioService.GetAllAsync(filtro);
 
         if (!result.IsSuccess || result.Data is null)
-        {
-            if (result.Message.Contains("não encontrad", StringComparison.OrdinalIgnoreCase))
-                return NotFound(new { result.Message });
-
-            if (result.Message.Contains("já", StringComparison.OrdinalIgnoreCase))
-                return Conflict(new { result.Message });
-
             return BadRequest(new { result.Message });
-        }
 
         return Ok(result.Data);
     }
@@ -48,9 +44,6 @@ public sealed class UsuarioController : ControllerBase
             if (result.Message.Contains("não encontrad", StringComparison.OrdinalIgnoreCase))
                 return NotFound(new { result.Message });
 
-            if (result.Message.Contains("já", StringComparison.OrdinalIgnoreCase))
-                return Conflict(new { result.Message });
-
             return BadRequest(new { result.Message });
         }
 
@@ -58,26 +51,19 @@ public sealed class UsuarioController : ControllerBase
     }
 
     [HttpPost]
+
     public async Task<IActionResult> CreateAsync([FromBody] UsuarioRequestDto request)
     {
         var result = await _usuarioService.CreateAsync(request);
 
         if (!result.IsSuccess || result.Data is null)
-        {
-            if (result.Message.Contains("não encontrad", StringComparison.OrdinalIgnoreCase))
-                return NotFound(new { result.Message });
-
-            if (result.Message.Contains("já", StringComparison.OrdinalIgnoreCase))
-                return Conflict(new { result.Message });
-
             return BadRequest(new { result.Message });
-        }
 
         return Ok(result.Data);
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UsuarioRequestDto request)
+    [HttpPatch("{id:guid}")]
+    public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UsuarioPatchDto request)
     {
         var result = await _usuarioService.UpdateAsync(id, request);
 
@@ -85,9 +71,6 @@ public sealed class UsuarioController : ControllerBase
         {
             if (result.Message.Contains("não encontrad", StringComparison.OrdinalIgnoreCase))
                 return NotFound(new { result.Message });
-
-            if (result.Message.Contains("já", StringComparison.OrdinalIgnoreCase))
-                return Conflict(new { result.Message });
 
             return BadRequest(new { result.Message });
         }
@@ -105,9 +88,6 @@ public sealed class UsuarioController : ControllerBase
             if (result.Message.Contains("não encontrad", StringComparison.OrdinalIgnoreCase))
                 return NotFound(new { result.Message });
 
-            if (result.Message.Contains("já", StringComparison.OrdinalIgnoreCase))
-                return Conflict(new { result.Message });
-
             return BadRequest(new { result.Message });
         }
 
@@ -124,13 +104,9 @@ public sealed class UsuarioController : ControllerBase
             if (result.Message.Contains("não encontrad", StringComparison.OrdinalIgnoreCase))
                 return NotFound(new { result.Message });
 
-            if (result.Message.Contains("já", StringComparison.OrdinalIgnoreCase))
-                return Conflict(new { result.Message });
-
             return BadRequest(new { result.Message });
         }
 
         return Ok(result.Data);
     }
-
 }

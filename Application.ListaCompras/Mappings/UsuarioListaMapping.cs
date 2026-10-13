@@ -3,8 +3,10 @@ using Domain.ListaCompras.Entities;
 
 namespace Application.ListaCompras.Mappings
 {
+
     internal static class UsuarioListaMapping
     {
+
         public static UsuarioLista ToEntity(int listaId, Guid usuarioId)
         {
             return new UsuarioLista

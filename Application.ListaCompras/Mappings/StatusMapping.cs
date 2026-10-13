@@ -1,10 +1,12 @@
-﻿using Application.ListaCompras.DTOs.Status;
+using Application.ListaCompras.DTOs.Status;
 using Domain.ListaCompras.Entities;
 
 namespace Application.ListaCompras.Mappings
 {
+
     internal static class StatusMapping
     {
+
         public static Status ToEntity(StatusRequestDto request)
         {
             return new Status

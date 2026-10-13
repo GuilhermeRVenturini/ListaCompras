@@ -11,21 +11,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-// Banco de dados
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException(
-        "A connection string 'DefaultConnection' não foi configurada.");
+        "A connection string 'DefaultConnection' nï¿½o foi configurada.");
 
 builder.Services.AddDbContext<ListaCompras_DbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// Injeção de dependência - Repositórios
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped<IPrecoMercadoRepository, PrecoMercadoRepository>();
 builder.Services.AddScoped<IProdutoListaRepository, ProdutoListaRepository>();
 builder.Services.AddScoped<IUsuarioListaRepository, UsuarioListaRepository>();
 
-// Injeção de dependência - Services
 builder.Services.AddScoped<IHistoricoService, HistoricoService>();
 builder.Services.AddScoped<IListaService, ListaService>();
 builder.Services.AddScoped<IMercadoService, MercadoService>();
@@ -41,7 +38,6 @@ var app = builder.Build();
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-// Middleware global de tratamento de exceções
 app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())

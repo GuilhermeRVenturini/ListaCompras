@@ -24,6 +24,7 @@ public sealed class ListaController : ControllerBase
     }
 
     [HttpGet]
+
     public async Task<IActionResult> GetAllAsync()
     {
         var result = await _listaService.GetAllAsync();
@@ -62,6 +63,7 @@ public sealed class ListaController : ControllerBase
     }
 
     [HttpPost]
+
     public async Task<IActionResult> CreateAsync([FromBody] ListaRequestDto request)
     {
         var result = await _listaService.CreateAsync(request);
@@ -80,8 +82,8 @@ public sealed class ListaController : ControllerBase
         return Ok(result.Data);
     }
 
-    [HttpPut("{id:int}")]
-    public async Task<IActionResult> UpdateAsync(int id, [FromBody] ListaRequestDto request)
+    [HttpPatch("{id:int}")]
+    public async Task<IActionResult> UpdateAsync(int id, [FromBody] ListaPatchDto request)
     {
         var result = await _listaService.UpdateAsync(id, request);
 
@@ -178,11 +180,16 @@ public sealed class ListaController : ControllerBase
         return Ok(result.Data);
     }
 
-    [HttpPut("{listaId:int}/produtos/{produtoId:int}")]
+    /// <summary>
+    /// Altera o status e/ou a quantidade do produto identificado na lista pela URL.
+    /// Não adiciona outro produto: o vínculo já deve existir, e um novo status
+    /// precisa corresponder a um registro cadastrado.
+    /// </summary>
+    [HttpPatch("{listaId:int}/produtos/{produtoId:int}")]
     public async Task<IActionResult> UpdateProdutoAsync(
         int listaId,
         int produtoId,
-        [FromBody] ProdutoListaRequestDto request)
+        [FromBody] ProdutoListaPatchDto request)
     {
         var result = await _produtoListaService.UpdateAsync(listaId, produtoId, request);
 
@@ -294,5 +301,4 @@ public sealed class ListaController : ControllerBase
 
         return NoContent();
     }
-
 }

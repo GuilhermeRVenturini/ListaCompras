@@ -3,8 +3,10 @@ using Domain.ListaCompras.Entities;
 
 namespace Application.ListaCompras.Mappings
 {
+
     internal static class HistoricoMapping
     {
+
         public static HistoricoResponseDto ToResponseDto(Historico entity)
         {
             return new HistoricoResponseDto

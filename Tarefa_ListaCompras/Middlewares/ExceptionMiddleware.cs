@@ -4,8 +4,11 @@ namespace API.ListaCompras.Middlewares;
 
 public sealed class ExceptionMiddleware
 {
+
     private readonly RequestDelegate _next;
+
     private readonly ILogger<ExceptionMiddleware> _logger;
+
     private readonly IWebHostEnvironment _environment;
 
     public ExceptionMiddleware(
@@ -18,14 +21,25 @@ public sealed class ExceptionMiddleware
         _environment = environment;
     }
 
+    /// <summary>
+    /// Intercepta erros não tratados durante a execução da requisição.
+    /// <list type="number">
+    /// <item>Executa o próximo componente da pipeline.</item>
+    /// <item>Registra método, rota e exceção se ocorrer uma falha.</item>
+    /// <item>Retorna uma resposta <c>ProblemDetails</c> com código HTTP e identificador de rastreio.</item>
+    /// </list>
+    /// A mensagem original da exceção só é exposta em ambiente de desenvolvimento.
+    /// </summary>
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
+
             await _next(context);
         }
         catch (Exception exception)
         {
+
             _logger.LogError(
                 exception,
                 "Erro não tratado na requisição {Method} {Path}.",
@@ -36,8 +50,11 @@ public sealed class ExceptionMiddleware
         }
     }
 
-    private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private async Task HandleExceptionAsync(
+        HttpContext context,
+        Exception exception)
     {
+
         var statusCode = exception switch
         {
             ArgumentException => StatusCodes.Status400BadRequest,
@@ -56,15 +73,18 @@ public sealed class ExceptionMiddleware
         {
             Status = statusCode,
             Title = title,
+
             Detail = _environment.IsDevelopment()
                 ? exception.Message
                 : "Não foi possível concluir a operação.",
+
             Instance = context.Request.Path
         };
 
         problemDetails.Extensions["traceId"] = context.TraceIdentifier;
 
         context.Response.StatusCode = statusCode;
+
         context.Response.ContentType = "application/problem+json";
 
         await context.Response.WriteAsJsonAsync(problemDetails);

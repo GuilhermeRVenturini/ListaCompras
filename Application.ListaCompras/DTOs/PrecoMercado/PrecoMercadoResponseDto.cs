@@ -1,5 +1,6 @@
 namespace Application.ListaCompras.DTOs.PrecoMercado
 {
+
     public sealed class PrecoMercadoResponseDto
     {
         public int ProdutoId { get; init; }

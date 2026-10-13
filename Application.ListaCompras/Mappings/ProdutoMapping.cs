@@ -1,10 +1,12 @@
-﻿using Application.ListaCompras.DTOs.Produto;
+using Application.ListaCompras.DTOs.Produto;
 using Domain.ListaCompras.Entities;
 
 namespace Application.ListaCompras.Mappings
 {
+
     internal static class ProdutoMapping
     {
+
         public static Produto ToEntity(ProdutoRequestDto request)
         {
             return new Produto
@@ -16,12 +18,16 @@ namespace Application.ListaCompras.Mappings
             };
         }
 
-        public static void MapToEntity(ProdutoRequestDto request, Produto entity)
+        public static void MapToExistingEntity(ProdutoPatchDto request, Produto entity)
         {
-            entity.Nome = request.Nome;
-            entity.Descricao = request.Descricao;
-            entity.Fabricante = request.Fabricante;
-            entity.Validade = request.Validade;
+            if (request.Nome is not null)
+                entity.Nome = request.Nome;
+            if (request.Descricao is not null)
+                entity.Descricao = request.Descricao;
+            if (request.Fabricante is not null)
+                entity.Fabricante = request.Fabricante;
+            if (request.Validade is not null)
+                entity.Validade = request.Validade.Value;
         }
 
         public static ProdutoResponseDto ToResponseDto(Produto entity)

@@ -1,4 +1,3 @@
-using Application.ListaCompras.DTOs.Status;
 using Application.ListaCompras.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +15,7 @@ public sealed class StatusController : ControllerBase
     }
 
     [HttpGet]
+
     public async Task<IActionResult> GetAllAsync()
     {
         var result = await _service.GetAllAsync();
@@ -33,7 +33,7 @@ public sealed class StatusController : ControllerBase
 
         if (!result.IsSuccess || result.Data is null)
         {
-            if (result.Message.Equals("Registro não encontrado.", StringComparison.OrdinalIgnoreCase))
+            if (result.Message.Contains("não encontrad", StringComparison.OrdinalIgnoreCase))
                 return NotFound(new { result.Message });
 
             return BadRequest(new { result.Message });

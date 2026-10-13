@@ -3,8 +3,10 @@ using Domain.ListaCompras.Entities;
 
 namespace Application.ListaCompras.Mappings
 {
+
     internal static class PrecoMercadoMapping
     {
+
         public static PrecoMercado ToEntity(int produtoId, int mercadoId, PrecoMercadoRequestDto request)
         {
             return new PrecoMercado
@@ -15,9 +17,10 @@ namespace Application.ListaCompras.Mappings
             };
         }
 
-        public static void MapToEntity(PrecoMercadoRequestDto request, PrecoMercado entity)
+        public static void MapToExistingEntity(PrecoMercadoPatchDto request, PrecoMercado entity)
         {
-            entity.PrecoId = request.PrecoId;
+            if (request.PrecoId is not null)
+                entity.PrecoId = request.PrecoId.Value;
         }
 
         public static PrecoMercadoResponseDto ToResponseDto(PrecoMercado entity)

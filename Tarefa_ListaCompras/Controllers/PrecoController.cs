@@ -16,6 +16,7 @@ public sealed class PrecoController : ControllerBase
     }
 
     [HttpGet]
+
     public async Task<IActionResult> GetAllAsync()
     {
         var result = await _service.GetAllAsync();
@@ -33,7 +34,7 @@ public sealed class PrecoController : ControllerBase
 
         if (!result.IsSuccess || result.Data is null)
         {
-            if (result.Message.Equals("Registro não encontrado.", StringComparison.OrdinalIgnoreCase))
+            if (result.Message.Contains("não encontrad", StringComparison.OrdinalIgnoreCase))
                 return NotFound(new { result.Message });
 
             return BadRequest(new { result.Message });
@@ -43,6 +44,7 @@ public sealed class PrecoController : ControllerBase
     }
 
     [HttpPost]
+
     public async Task<IActionResult> CreateAsync([FromBody] PrecoRequestDto request)
     {
         var result = await _service.CreateAsync(request);
@@ -53,14 +55,14 @@ public sealed class PrecoController : ControllerBase
         return Ok(result.Data);
     }
 
-    [HttpPut("{id:int}")]
-    public async Task<IActionResult> UpdateAsync(int id, [FromBody] PrecoRequestDto request)
+    [HttpPatch("{id:int}")]
+    public async Task<IActionResult> UpdateAsync(int id, [FromBody] PrecoPatchDto request)
     {
         var result = await _service.UpdateAsync(id, request);
 
         if (!result.IsSuccess || result.Data is null)
         {
-            if (result.Message.Equals("Registro não encontrado.", StringComparison.OrdinalIgnoreCase))
+            if (result.Message.Contains("não encontrad", StringComparison.OrdinalIgnoreCase))
                 return NotFound(new { result.Message });
 
             return BadRequest(new { result.Message });
@@ -76,7 +78,7 @@ public sealed class PrecoController : ControllerBase
 
         if (!result.IsSuccess || result.Data is null)
         {
-            if (result.Message.Equals("Registro não encontrado.", StringComparison.OrdinalIgnoreCase))
+            if (result.Message.Contains("não encontrad", StringComparison.OrdinalIgnoreCase))
                 return NotFound(new { result.Message });
 
             return BadRequest(new { result.Message });

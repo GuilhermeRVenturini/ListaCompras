@@ -1,4 +1,4 @@
-﻿using Domain.ListaCompras.Interfaces;
+using Domain.ListaCompras.Interfaces;
 
 namespace Domain.ListaCompras.Interfaces
 {

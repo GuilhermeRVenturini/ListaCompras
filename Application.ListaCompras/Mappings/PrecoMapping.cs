@@ -1,10 +1,12 @@
-﻿using Application.ListaCompras.DTOs.Preco;
+using Application.ListaCompras.DTOs.Preco;
 using Domain.ListaCompras.Entities;
 
 namespace Application.ListaCompras.Mappings
 {
+
     internal static class PrecoMapping
     {
+
         public static Preco ToEntity(PrecoRequestDto request)
         {
             return new Preco
@@ -14,10 +16,12 @@ namespace Application.ListaCompras.Mappings
             };
         }
 
-        public static void MapToEntity(PrecoRequestDto request, Preco entity)
+        public static void MapToExistingEntity(PrecoPatchDto request, Preco entity)
         {
-            entity.Valor = request.Valor;
-            entity.Desconto = request.Desconto;
+            if (request.Valor is not null)
+                entity.Valor = request.Valor.Value;
+            if (request.Desconto is not null)
+                entity.Desconto = request.Desconto.Value;
         }
 
         public static PrecoResponseDto ToResponseDto(Preco entity)

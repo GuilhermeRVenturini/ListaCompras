@@ -14,26 +14,30 @@ public sealed class HistoricoController : ControllerBase
         _service = service;
     }
 
-    // Retorna todos os registros, do mais recente para o mais antigo.
     [HttpGet]
+
     public async Task<IActionResult> GetAllAsync()
     {
         var result = await _service.GetAllAsync();
 
-        if (!result.IsSuccess)
+        if (!result.IsSuccess || result.Data is null)
             return BadRequest(new { result.Message });
 
         return Ok(result.Data);
     }
 
-    // Busca um registro específico do histórico.
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetByIdAsync(int id)
     {
         var result = await _service.GetByIdAsync(id);
 
         if (!result.IsSuccess || result.Data is null)
-            return NotFound(new { result.Message });
+        {
+            if (result.Message.Contains("não encontrad", StringComparison.OrdinalIgnoreCase))
+                return NotFound(new { result.Message });
+
+            return BadRequest(new { result.Message });
+        }
 
         return Ok(result.Data);
     }

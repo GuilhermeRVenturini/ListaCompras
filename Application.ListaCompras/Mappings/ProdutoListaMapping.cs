@@ -3,8 +3,10 @@ using Domain.ListaCompras.Entities;
 
 namespace Application.ListaCompras.Mappings
 {
+
     internal static class ProdutoListaMapping
     {
+
         public static ProdutoLista ToEntity(int produtoId, int listaId, ProdutoListaRequestDto request)
         {
             return new ProdutoLista
@@ -16,10 +18,12 @@ namespace Application.ListaCompras.Mappings
             };
         }
 
-        public static void MapToEntity(ProdutoListaRequestDto request, ProdutoLista entity)
+        public static void MapToExistingEntity(ProdutoListaPatchDto request, ProdutoLista entity)
         {
-            entity.StatusId = request.StatusId;
-            entity.QuantidadeEstoque = request.QuantidadeEstoque;
+            if (request.StatusId is not null)
+                entity.StatusId = request.StatusId.Value;
+            if (request.QuantidadeEstoque is not null)
+                entity.QuantidadeEstoque = request.QuantidadeEstoque.Value;
         }
 
         public static ProdutoListaResponseDto ToResponseDto(ProdutoLista entity)

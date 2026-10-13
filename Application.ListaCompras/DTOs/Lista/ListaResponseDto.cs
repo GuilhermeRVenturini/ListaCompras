@@ -1,4 +1,4 @@
-﻿namespace Application.ListaCompras.DTOs.Lista
+namespace Application.ListaCompras.DTOs.Lista
 {
     public sealed class ListaResponseDto
     {
